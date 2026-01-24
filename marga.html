@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Marga Area | Noctyra Family</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-dark">
+    <div class="marga-theme p-40">
+        <div class="banner-marga">
+            <h1><i class="fas fa-skull-crossbones"></i> NOCTYRA PRIVATE BASE</h1>
+            <p>Honor, Loyalty, and Brotherhood.</p>
+        </div>
+
+        <div class="grid-2 mt-20">
+            <div class="card bg-purple-900">
+                <h3>Noctyra Family Lore</h3>
+                <p>Noctyra didirikan sebagai simbol kekuatan di dunia roleplay. Kita bergerak dalam bayangan, mengeksekusi project dengan presisi.</p>
+            </div>
+            <div class="card bg-purple-900">
+                <h3>Internal Roster</h3>
+                <ul class="roster-list">
+                    <li><strong>Founder:</strong> Fikri</li>
+                    <li><strong>Underboss:</strong> [Open Recruitment]</li>
+                    <li><strong>Member:</strong> Check Discord Private</li>
+                </ul>
+            </div>
+        </div>
+        <div class="mt-20 text-center">
+            <a href="https://discord.gg/YOUR_PRIVATE_LINK" class="btn-marga">Join Private Discord</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+        
+        const auth = getAuth();
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) window.location.href = "index.html";
+            const snap = await getDoc(doc(getFirestore(), "users", user.uid));
+            if (!["FOUNDER", "ADMIN", "MARGA"].includes(snap.data().role)) {
+                alert("Kamu bukan keluarga Noctyra!");
+                window.location.href = "index.html";
+            }
+        });
+    </script>
+</body>
+</html>

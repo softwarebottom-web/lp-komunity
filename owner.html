@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Owner Area | L.P ZONE</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-dark text-white">
+    <div class="p-40">
+        <header class="flex justify-between border-b pb-20">
+            <h1><i class="fas fa-crown text-red"></i> Founder Control Panel</h1>
+            <a href="index.html" class="btn-secondary">Back to Dashboard</a>
+        </header>
+
+        <div class="grid-2 mt-20">
+            <div class="card shadow">
+                <h3>Post Update Project (SAMP/FiveM)</h3>
+                <div class="form-group mt-10">
+                    <label>Nama Project</label>
+                    <input type="text" id="proj-name" placeholder="Contoh: Ladera Roleplay v2">
+                    <label>Deskripsi</label>
+                    <textarea id="proj-desc" placeholder="Detail update..."></textarea>
+                    <button id="publish-btn" class="btn-primary w-full mt-10">Publish to Fans</button>
+                </div>
+            </div>
+
+            <div class="card shadow">
+                <h3>Community Insights</h3>
+                <div class="stats-box mt-10">
+                    <p>Total User: <span id="stat-user">Loading...</span></p>
+                    <p>Total Chat Hari Ini: <span id="stat-chat">Loading...</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+        
+        const auth = getAuth();
+        const db = getFirestore();
+
+        // SECURITY GUARD: Hanya FOUNDER yang boleh di sini
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) window.location.href = "index.html";
+            const snap = await getDoc(doc(db, "users", user.uid));
+            if (snap.data().role !== "FOUNDER") {
+                alert("Akses Dilarang!");
+                window.location.href = "index.html";
+            }
+        });
+    </script>
+</body>
+</html>

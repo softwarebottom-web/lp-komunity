@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L.P ZONE | Noctyra Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-dark text-white">
+
+    <div class="dashboard-wrapper">
+        <aside class="sidebar">
+            <div class="brand">NOCTYRA <span class="accent-blue">ZONE</span></div>
+            
+            <nav id="nav-menu">
+                <a href="index.html" class="nav-link active">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+                <a href="#about" class="nav-link">
+                    <i class="fas fa-info-circle"></i> About
+                </a>
+                
+                <a href="https://discord.gg/LINK_DISCORD_LPZONE" target="_blank" class="nav-link">
+                    <i class="fab fa-discord"></i> Discord L.P Zone
+                </a>
+
+                <hr class="nav-divider">
+                
+                <div id="role-based-links"></div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div id="user-display" class="user-profile hidden">
+                    <div class="user-meta">
+                        <span id="display-email" class="text-xs">email@user.com</span>
+                        <span id="display-role" class="badge">MEMBER</span>
+                    </div>
+                </div>
+                <div id="auth-action-area">
+                    <a href="form.html" class="btn-primary w-full text-center no-deco">Login / Register</a>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-body">
+            <header class="top-header">
+                <div class="section-title">Public Hub</div>
+                <div class="header-tools">
+                    <a href="https://saweria.co/lpsquad" target="_blank" class="btn-saweria">
+                        <i class="fas fa-coins"></i> Saweria Support
+                    </a>
+                    <div class="social-links">
+                        <a href="https://www.youtube.com/@ZaneNoctyra"><i class="fab fa-youtube"></i></a>
+                        <a href="https://www.instagram.com/fikrifirdauszz?igsh=MTl6em1xeWE1anNxNw=="><i class="fab fa-instagram"></i></a>
+  <a href="tiktok.com/@fikri.firdaus32" target="_blank" class="nav-link">
+        <i class="fab fa-tiktok"></i> TikTok Noctyra
+    </a>
+                    </div>
+                </div>
+            </header>
+
+            <div class="scroll-content p-25">
+                <section id="about" class="glass-card mb-25">
+                    <h2><i class="fas fa-users-cog"></i> About L.P Zone</h2>
+                    <p>Pusat komunitas khusus scripter SAMP, FiveM, dan Roleplayer Noctyra. Kami fokus pada pengembangan project coding berkualitas dan manajemen risiko insight.</p>
+                </section>
+
+                <div class="grid-2 mb-25">
+                    <div class="glass-card border-blue" id="fivem">
+                        <h3><i class="fab fa-unity"></i> FiveM Projects</h3>
+                        <p class="text-gray">Katalog script dan resources FiveM terbaru.</p>
+                        <a href="https://digital-store-fikri.biz.id" class="text-blue text-sm">Lihat di Store →</a>
+                    </div>
+                    <div class="glass-card border-purple" id="samp">
+                        <h3><i class="fas fa-code"></i> SAMP Projects</h3>
+                        <p class="text-gray">Gamemode, filterscripts, dan basis data Pawn.</p>
+                        <a href="https://laboratorium-project.web.id" class="text-purple text-sm">Lihat Lab →</a>
+                    </div>
+                </div>
+
+                <section class="chat-section glass-card">
+                    <h3><i class="fas fa-comments"></i> Global Community Chat</h3>
+                    <div id="chat-messages" class="chat-display">
+                        </div>
+                    <div class="chat-input-group mt-15" id="chat-form-area">
+                        <p class="text-xs text-gray mb-10">Silakan login untuk ikut berbincang.</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, collection, query, orderBy, limit, onSnapshot, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCshVgfvU3OGL9ZuLOYsJZxLACxdVDDZYk",
+            authDomain: "lpsquad-e4aad.firebaseapp.com",
+            projectId: "lpsquad-e4aad",
+            storageBucket: "lpsquad-e4aad.firebasestorage.app",
+            appId: "1:390296155151:web:59775d3ce079c36b021f7a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- SESSION MANAGEMENT ---
+        onAuthStateChanged(auth, async (user) => {
+            const roleLinks = document.getElementById('role-based-links');
+            const authActionArea = document.getElementById('auth-action-area');
+            const userDisplay = document.getElementById('user-display');
+            const chatInputArea = document.getElementById('chat-form-area');
+
+            if (user) {
+                // Ambil Role dari Firestore
+                const userRef = doc(db, "users", user.uid);
+                const snap = await getDoc(userRef);
+                const userData = snap.exists() ? snap.data() : { role: "MEMBER" };
+
+                // Update UI Sidebar
+                userDisplay.classList.remove('hidden');
+                document.getElementById('display-email').innerText = user.email;
+                document.getElementById('display-role').innerText = userData.role;
+                document.getElementById('display-role').className = `badge badge-${userData.role.toLowerCase()}`;
+                
+                // Render Link berdasarkan Role
+                let links = "";
+                if (userData.role === "FOUNDER") {
+                    links += `<a href="owner.html" class="nav-link text-red"><i class="fas fa-crown"></i> Owner Area</a>`;
+                }
+                if (["FOUNDER", "ADMIN"].includes(userData.role)) {
+                    links += `<a href="admin.html" class="nav-link text-blue"><i class="fas fa-user-shield"></i> Admin Area</a>`;
+                }
+                if (["FOUNDER", "ADMIN", "MARGA"].includes(userData.role)) {
+                    links += `<a href="marga.html" class="nav-link text-purple"><i class="fas fa-skull"></i> Marga Area</a>`;
+                }
+                roleLinks.innerHTML = links;
+
+                // Tombol Logout
+                authActionArea.innerHTML = `<button id="logout-btn" class="btn-logout w-full">Logout</button>`;
+                document.getElementById('logout-btn').onclick = () => signOut(auth);
+
+                // Form Chat Aktif
+                chatInputArea.innerHTML = `
+                    <div class="flex gap-10">
+                        <input type="text" id="msg-input" placeholder="Tulis pesan..." class="flex-1">
+                        <button id="send-btn" class="btn-primary"><i class="fas fa-paper-plane"></i></button>
+                    </div>`;
+                
+                document.getElementById('send-btn').onclick = () => sendChat(userData.role);
+            } else {
+                // User Guest
+                roleLinks.innerHTML = "";
+                userDisplay.classList.add('hidden');
+                authActionArea.innerHTML = `<a href="form.html" class="btn-primary w-full text-center no-deco">Login / Register</a>`;
+            }
+        });
+
+        // --- GLOBAL CHAT LOGIC ---
+        const q = query(collection(db, "global_chat"), orderBy("time", "asc"), limit(50));
+        onSnapshot(q, (snapshot) => {
+            const chatBox = document.getElementById('chat-messages');
+            chatBox.innerHTML = "";
+            snapshot.forEach(doc => {
+                const m = doc.data();
+                chatBox.innerHTML += `
+                    <div class="chat-msg">
+                        <span class="badge badge-${m.role.toLowerCase()}">${m.role}</span>
+                        <b class="user-name">${m.name}:</b> <span>${m.text}</span>
+                    </div>`;
+            });
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+
+        async function sendChat(role) {
+            const input = document.getElementById('msg-input');
+            if (!input.value.trim()) return;
+            const user = auth.currentUser;
+            await addDoc(collection(db, "global_chat"), {
+                name: user.email.split('@')[0],
+                role: role,
+                text: input.value,
+                time: serverTimestamp()
+            });
+            input.value = "";
+        }
+    </script>
+</body>
+</html>

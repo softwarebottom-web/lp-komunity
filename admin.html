@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Area | L.P ZONE</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-dark text-white">
+    <div class="p-40">
+        <h1><i class="fas fa-user-shield text-blue"></i> Staff Management</h1>
+        <div class="card mt-20">
+            <h3>Global Chat Moderation</h3>
+            <p>Admin bisa memantau dan menghapus chat yang melanggar aturan Noctyra di sini.</p>
+            <div id="admin-chat-monitor" class="chat-display"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+        
+        const auth = getAuth();
+        const db = getFirestore();
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) window.location.href = "index.html";
+            const snap = await getDoc(doc(db, "users", user.uid));
+            if (!["FOUNDER", "ADMIN"].includes(snap.data().role)) {
+                alert("Hanya Staff yang boleh masuk!");
+                window.location.href = "index.html";
+            }
+        });
+    </script>
+</body>
+</html>

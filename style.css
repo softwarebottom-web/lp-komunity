@@ -1,0 +1,49 @@
+:root {
+    --bg: #0b0e14;
+    --side: #151921;
+    --card: #1c222d;
+    --blue: #3b82f6;
+    --purple: #a855f7;
+    --red: #ef4444;
+}
+
+body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; overflow: hidden; }
+.dashboard-wrapper { display: flex; height: 100vh; }
+
+/* Sidebar */
+.sidebar { width: 280px; background: var(--side); padding: 25px; display: flex; flex-direction: column; border-right: 1px solid #2d3440; }
+.brand { font-size: 1.6rem; font-weight: 800; letter-spacing: 2px; margin-bottom: 40px; }
+.accent { color: var(--blue); }
+
+.nav-link { display: flex; align-items: center; gap: 12px; padding: 12px 15px; color: #94a3b8; text-decoration: none; border-radius: 8px; transition: 0.3s; margin-bottom: 5px; }
+.nav-link:hover, .nav-link.active { background: rgba(59, 130, 246, 0.1); color: var(--blue); }
+
+/* Custom Role Colors */
+.text-red { color: var(--red) !important; font-weight: bold; }
+.text-purple { color: var(--purple) !important; font-weight: bold; }
+
+/* Chat UI */
+.chat-display { height: 400px; overflow-y: auto; background: var(--side); border-radius: 12px; padding: 15px; margin-bottom: 10px; border: 1px solid #2d3440; }
+.chat-controls { display: flex; gap: 10px; }
+.chat-controls input { flex: 1; padding: 12px; border-radius: 8px; background: var(--card); border: 1px solid #2d3440; color: #fff; }
+
+.saweria-link { background: #faad14; color: #000; padding: 8px 15px; border-radius: 8px; font-weight: 800; text-decoration: none; }
+
+/* Efek hover khusus untuk TikTok */
+.fa-tiktok:hover {
+    color: #ff0050; /* Warna merah TikTok */
+    text-shadow: 2px 0px #00f2ea; /* Efek cyan TikTok */
+}
+
+.social-links a {
+    margin-left: 15px;
+    font-size: 1.2rem;
+    color: #94a3b8;
+    transition: 0.3s;
+}
+
+.social-links a:hover {
+    color: #fff;
+    transform: translateY(-3px);
+}
+

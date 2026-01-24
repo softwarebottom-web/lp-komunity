@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Login | L.P ZONE</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .auth-container { max-width: 400px; margin: 100px auto; padding: 30px; background: #1c222d; border-radius: 15px; border: 1px solid #3b82f6; }
+        input { width: 100%; padding: 12px; margin: 10px 0; background: #0b0e14; border: 1px solid #2d3440; color: white; border-radius: 8px; }
+        .toggle-link { cursor: pointer; color: #3b82f6; font-size: 0.9rem; text-align: center; display: block; margin-top: 15px; }
+    </style>
+</head>
+<body class="bg-dark">
+    <div class="auth-container shadow">
+        <h2 id="auth-title" class="text-center">Login L.P Zone</h2>
+        
+        <input type="email" id="email" placeholder="Alamat Email">
+        <input type="password" id="password" placeholder="Password">
+        
+        <button id="main-auth-btn" class="btn-primary w-full mt-10">Masuk</button>
+        
+        <p id="toggle-auth" class="toggle-link">Belum punya akun? Daftar di sini</p>
+        <a href="index.html" class="toggle-link" style="color: #94a3b8;">Kembali ke Beranda</a>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCshVgfvU3OGL9ZuLOYsJZxLACxdVDDZYk",
+            authDomain: "lpsquad-e4aad.firebaseapp.com",
+            projectId: "lpsquad-e4aad",
+            storageBucket: "lpsquad-e4aad.firebasestorage.app",
+            appId: "1:390296155151:web:59775d3ce079c36b021f7a"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let isLoginMode = true;
+
+        const title = document.getElementById('auth-title');
+        const btn = document.getElementById('main-auth-btn');
+        const toggle = document.getElementById('toggle-auth');
+
+        toggle.onclick = () => {
+            isLoginMode = !isLoginMode;
+            title.innerText = isLoginMode ? "Login L.P Zone" : "Daftar Akun Baru";
+            btn.innerText = isLoginMode ? "Masuk" : "Daftar";
+            toggle.innerText = isLoginMode ? "Belum punya akun? Daftar di sini" : "Sudah punya akun? Login";
+        };
+
+        btn.onclick = async () => {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+
+            try {
+                if (isLoginMode) {
+                    await signInWithEmailAndPassword(auth, email, pass);
+                    window.location.href = "index.html";
+                } else {
+                    const res = await createUserWithEmailAndPassword(auth, email, pass);
+                    // Set default role sebagai MEMBER di Firestore
+                    await setDoc(doc(db, "users", res.user.uid), {
+                        email: email,
+                        role: "MEMBER",
+                        name: email.split('@')[0] // Ambil nama dari email
+                    });
+                    alert("Pendaftaran Berhasil!");
+                    window.location.href = "index.html";
+                }
+            } catch (err) {
+                alert("Error: " + err.message);
+            }
+        };
+    </script>
+</body>
+</html>
