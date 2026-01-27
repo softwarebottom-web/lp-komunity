@@ -2,79 +2,73 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Login | L.P ZONE</title>
+    <title>Access Portal | L.P ZONE</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .auth-container { max-width: 400px; margin: 100px auto; padding: 30px; background: #1c222d; border-radius: 15px; border: 1px solid #3b82f6; }
-        input { width: 100%; padding: 12px; margin: 10px 0; background: #0b0e14; border: 1px solid #2d3440; color: white; border-radius: 8px; }
-        .toggle-link { cursor: pointer; color: #3b82f6; font-size: 0.9rem; text-align: center; display: block; margin-top: 15px; }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body class="bg-dark">
-    <div class="auth-container shadow">
-        <h2 id="auth-title" class="text-center">Login L.P Zone</h2>
-        
-        <input type="email" id="email" placeholder="Alamat Email">
-        <input type="password" id="password" placeholder="Password">
-        
-        <button id="main-auth-btn" class="btn-primary w-full mt-10">Masuk</button>
-        
-        <p id="toggle-auth" class="toggle-link">Belum punya akun? Daftar di sini</p>
-        <a href="index.html" class="toggle-link" style="color: #94a3b8;">Kembali ke Beranda</a>
+<body>
+    <div class="auth-wrapper">
+        <div class="auth-box animate-up">
+            <h2 id="form-title" style="text-align:center; margin-bottom: 30px;">L.P ZONE ID</h2>
+            
+            <div class="input-group">
+                <input type="email" id="email" placeholder="Email Address" required>
+            </div>
+            <div class="input-group">
+                <input type="password" id="pass" placeholder="Password" required>
+            </div>
+
+            <button id="btn-submit" class="btn-glow">LOGIN SYSTEM</button>
+            
+            <button id="btn-discord-login" class="btn-glow btn-discord">
+                <i class="fab fa-discord"></i> Login with Discord
+            </button>
+
+            <p class="toggle-area">
+                <span id="toggle-text">Belum punya akun? Buat disini</span>
+            </p>
+            <p style="text-align:center;"><a href="index.html" style="color:#94a3b8; text-decoration:none;">Back to Home</a></p>
+        </div>
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+        import { auth, db, loginDiscord } from "./script.js";
+        import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
+        import { doc, setDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCshVgfvU3OGL9ZuLOYsJZxLACxdVDDZYk",
-            authDomain: "lpsquad-e4aad.firebaseapp.com",
-            projectId: "lpsquad-e4aad",
-            storageBucket: "lpsquad-e4aad.firebasestorage.app",
-            appId: "1:390296155151:web:59775d3ce079c36b021f7a"
-        };
+        let isLogin = true;
+        
+        // Event Listener Discord
+        document.getElementById('btn-discord-login').onclick = loginDiscord;
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        let isLoginMode = true;
-
-        const title = document.getElementById('auth-title');
-        const btn = document.getElementById('main-auth-btn');
-        const toggle = document.getElementById('toggle-auth');
+        // Logic Email Password Lama
+        const btn = document.getElementById('btn-submit');
+        const toggle = document.getElementById('toggle-text');
 
         toggle.onclick = () => {
-            isLoginMode = !isLoginMode;
-            title.innerText = isLoginMode ? "Login L.P Zone" : "Daftar Akun Baru";
-            btn.innerText = isLoginMode ? "Masuk" : "Daftar";
-            toggle.innerText = isLoginMode ? "Belum punya akun? Daftar di sini" : "Sudah punya akun? Login";
+            isLogin = !isLogin;
+            document.getElementById('form-title').innerText = isLogin ? "L.P ZONE ID" : "REGISTER MEMBER";
+            btn.innerText = isLogin ? "LOGIN SYSTEM" : "CREATE ACCOUNT";
+            toggle.innerText = isLogin ? "Belum punya akun? Buat disini" : "Sudah punya akun? Login";
         };
 
         btn.onclick = async () => {
             const email = document.getElementById('email').value;
-            const pass = document.getElementById('password').value;
-
+            const pass = document.getElementById('pass').value;
             try {
-                if (isLoginMode) {
+                if(isLogin) {
                     await signInWithEmailAndPassword(auth, email, pass);
                     window.location.href = "index.html";
                 } else {
                     const res = await createUserWithEmailAndPassword(auth, email, pass);
-                    // Set default role sebagai MEMBER di Firestore
                     await setDoc(doc(db, "users", res.user.uid), {
-                        email: email,
-                        role: "MEMBER",
-                        name: email.split('@')[0] // Ambil nama dari email
+                        email: email, role: "MEMBER", name: email.split('@')[0]
                     });
-                    alert("Pendaftaran Berhasil!");
+                    alert("Registrasi Berhasil!");
                     window.location.href = "index.html";
                 }
-            } catch (err) {
-                alert("Error: " + err.message);
-            }
+            } catch(e) { alert(e.message); }
         };
     </script>
 </body>
