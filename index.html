@@ -2,65 +2,47 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>L.P ZONE | Ecosystem</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>body { user-select: none; -webkit-user-select: none; }</style>
 </head>
-<body>
-    
+<body class="bg-dark text-white">
     <nav class="navbar">
-        <div class="logo">L.P <span class="highlight">ZONE</span></div>
-        <div id="dynamic-nav" class="nav-links">
-            </div>
+        <div class="logo">L.P <span class="accent">ZONE</span></div>
+        <div id="dynamic-nav" class="nav-links"></div>
     </nav>
 
-    <header class="hero-section animate-up">
-        <div class="container text-center">
-            <h1>DIGITAL <span class="text-neon">INNOVATION</span> HUB</h1>
-            <p class="hero-desc">Platform ekosistem terpadu untuk Marga Noctyra dan Pengembangan Script.</p>
-        </div>
-    </header>
+    <div class="container animate-up">
+        <header class="hero text-center py-40">
+            <h1>DIGITAL <span class="text-blue">INNOVATION</span> HUB</h1>
+            <p class="text-gray">Platform terpadu untuk Pengembangan Script & Project Hub.</p>
+        </header>
 
-    <div class="container main-grid">
-        
-        <a href="https://digital-store-fikri.biz.id" target="_blank" class="project-card card-store animate-up delay-1">
-            <div class="card-icon"><i class="fas fa-shopping-cart"></i></div>
-            <div class="card-content">
-                <h3>ZStore Official</h3>
-                <p>Marketplace aset digital premium. Script FiveM, Mapping, dan kebutuhan server berkualitas tinggi.</p>
-                <span class="btn-text">Visit Store &rarr;</span>
+        <section class="glass-card mb-25">
+            <h3><i class="fas fa-play-circle text-red"></i> Media Logs</h3>
+            <div id="media-logs-container" class="grid-2 mt-15">
+                <p class="text-gray text-xs italic">Menunggu pembaruan media dari Owner...</p>
             </div>
-        </a>
+        </section>
 
-        <a href="https://laboratorium-project.web.id" target="_blank" class="project-card card-lab animate-up delay-2">
-            <div class="card-icon"><i class="fas fa-flask"></i></div>
-            <div class="card-content">
-                <h3>Laboratorium Repo</h3>
-                <p>Pusat eksperimen coding dan repositori script SAMP. Tempat lahirnya inovasi dan riset sistem.</p>
-                <span class="btn-text">Access Lab &rarr;</span>
-            </div>
-        </a>
-
-    </div>
-
-    <div class="container section-about animate-up delay-2">
-        <div class="glass-card">
-            <h2><i class="fas fa-shield-alt"></i> About L.P Zone</h2>
-            <p>L.P Zone bukan sekadar komunitas, melainkan ekosistem digital yang menghubungkan roleplay profesional (Marga Noctyra) dengan pengembangan teknologi server (L.P Dev). Kami menjunjung tinggi privasi, inovasi, dan loyalitas.</p>
+        <div class="grid-2">
+            <a href="https://digital-store-fikri.biz.id" target="_blank" class="project-card border-blue">
+                <i class="fas fa-shopping-cart fa-2x"></i>
+                <div>
+                    <h4>ZStore Official</h4>
+                    <p class="text-xs text-gray">Marketplace aset digital premium.</p>
+                </div>
+            </a>
+            <a href="https://laboratorium-project.web.id" target="_blank" class="project-card border-purple">
+                <i class="fas fa-flask fa-2x"></i>
+                <div>
+                    <h4>Laboratorium Repo</h4>
+                    <p class="text-xs text-gray">Pusat riset dan repositori script SAMP.</p>
+                </div>
+            </a>
         </div>
     </div>
-
-    <footer class="footer">
-        <p>&copy; 2024 L.P Zone Ecosystem. All Rights Reserved.</p>
-        <div class="socials">
-            <a href="#"><i class="fab fa-discord"></i></a>
-            <a href="#"><i class="fab fa-tiktok"></i></a>
-            <a href="#"><i class="fab fa-youtube"></i></a>
-        </div>
-    </footer>
-
     <script type="module" src="script.js"></script>
 </body>
 </html>

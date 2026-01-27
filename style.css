@@ -8,12 +8,16 @@
     --text: #e2e8f0;
 }
 
+/* --- SECURITY & RESET --- */
 body {
     margin: 0;
-    font-family: 'Outfit', sans-serif; /* Font Modern */
+    font-family: 'Outfit', sans-serif;
     background: var(--bg-dark);
     color: var(--text);
     overflow-x: hidden;
+    /* Anti Select */
+    user-select: none; 
+    -webkit-user-select: none;
 }
 
 /* --- ANIMASI --- */
@@ -59,6 +63,9 @@ body {
     z-index: 100;
     border-bottom: 1px solid var(--border);
 }
+
+.logo { font-size: 1.5rem; font-weight: bold; letter-spacing: 1px; }
+.highlight { color: var(--primary); }
 
 .nav-links a {
     color: #94a3b8;
@@ -119,7 +126,11 @@ body {
 .btn-discord {
     background: #5865F2;
     margin-top: 10px;
-    display: flex; align-items: center; justify-content: center; gap: 10px;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 10px;
+    text-decoration: none;
 }
 
 /* --- CHAT --- */
@@ -128,21 +139,11 @@ body {
 .msg-founder { border-left-color: var(--neon-purple); background: rgba(188, 19, 254, 0.1); }
 .msg-admin { border-left-color: var(--neon-blue); }
 
-/* --- RESPONSIVE --- */
-@media (max-width: 768px) {
-    .navbar { flex-direction: column; gap: 15px; text-align: center; }
-    .nav-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
-    .nav-links a { margin: 0; }
-}
-
-/* --- TAMBAHAN STYLE BARU --- */
-
-/* Hero Section */
-.hero-section { padding: 80px 20px 40px; }
+/* --- PROFESSIONAL INDEX LAYOUT --- */
+.hero-section { padding: 80px 20px 40px; text-align: center; }
 .hero-desc { color: #94a3b8; font-size: 1.1rem; max-width: 600px; margin: 10px auto; }
 .text-neon { color: var(--neon-blue); text-shadow: 0 0 15px rgba(0, 243, 255, 0.4); }
 
-/* Grid Project yang Rapih */
 .main-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -150,7 +151,6 @@ body {
     margin-bottom: 50px;
 }
 
-/* Project Card Desain */
 .project-card {
     display: flex;
     align-items: center;
@@ -180,31 +180,34 @@ body {
     border-radius: 50%;
     color: var(--neon-blue);
 }
-.card-store .card-icon { color: #10b981; } /* Hijau untuk Store */
-.card-lab .card-icon { color: #f59e0b; } /* Orange untuk Lab */
+.card-store .card-icon { color: #10b981; } /* Hijau ZStore */
+.card-lab .card-icon { color: #f59e0b; }   /* Orange Laboratorium */
 
 .card-content h3 { margin: 0 0 10px 0; font-size: 1.4rem; }
 .card-content p { margin: 0 0 15px 0; color: #94a3b8; font-size: 0.9rem; line-height: 1.5; }
-.btn-text { font-weight: bold; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; }
+.btn-text { font-weight: bold; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; color: var(--primary); }
 
-/* Footer */
+/* --- FOOTER & SOCIALS --- */
 .footer {
     text-align: center;
-    padding: 40px;
+    padding: 60px 40px;
     border-top: 1px solid var(--border);
     margin-top: 50px;
     color: #64748b;
 }
-.footer .socials { margin-top: 10px; }
-.footer .socials a { font-size: 1.2rem; margin: 0 10px; color: #94a3b8; transition:0.3s; }
-.footer .socials a:hover { color: #fff; }
+.footer .socials { margin-top: 15px; }
+.footer .socials a { font-size: 1.5rem; margin: 0 15px; color: #94a3b8; transition:0.3s; text-decoration: none; }
+.footer .socials a:hover { color: #fff; transform: scale(1.2); }
 
-/* Security Overlay (Anti Select) */
-body { user-select: none; -webkit-user-select: none; }
-
-/* Responsive Mobile */
+/* --- RESPONSIVE MOBILE --- */
 @media (max-width: 768px) {
-    .main-grid { grid-template-columns: 1fr; }
-    .project-card { flex-direction: column; text-align: center; }
+    .navbar { padding: 15px 20px; flex-direction: column; gap: 15px; text-align: center; }
+    .nav-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .nav-links a { margin: 0 5px; font-size: 0.9rem; }
+    
+    .main-grid { grid-template-columns: 1fr; gap: 20px; }
+    .project-card { flex-direction: column; text-align: center; padding: 25px; }
+    
+    .hero-section h1 { font-size: 2rem; }
+    .hero-desc { font-size: 0.9rem; }
 }
-
