@@ -1,25 +1,76 @@
 <!DOCTYPE html>
 <html>
-<head><title>Owner Panel</title><link rel="stylesheet" href="style.css"></head>
+<head><title>Owner Command</title><link rel="stylesheet" href="style.css"></head>
 <body>
-    <nav class="navbar"><div>OWNER PANEL</div><div id="dynamic-nav" class="nav-links"></div></nav>
+    <nav class="navbar"><div class="logo" style="color:#ef4444">OWNER <span>CMD</span></div><div id="dynamic-nav" class="nav-links"></div></nav>
+    
     <div class="container animate-up">
-        <div class="glass-card">
-            <h3><i class="fas fa-upload"></i> Broadcast Media Logs</h3>
-            <input type="text" id="m-title" placeholder="Judul Video" style="width:100%; margin-bottom:10px; padding:10px; background:#000; border:1px solid #333; color:#fff">
-            <input type="text" id="m-url" placeholder="Link YouTube/TikTok" style="width:100%; margin-bottom:10px; padding:10px; background:#000; border:1px solid #333; color:#fff">
-            <button id="btn-post" class="glass-card" style="width:100%; background:#6366f1; border:none; color:#fff; cursor:pointer">PUBLISH MEDIA</button>
+        <div class="grid-3 mb-20">
+            <div class="glass-card" style="text-align:center">
+                <h1 id="stat-users">---</h1>
+                <p style="font-size:0.8rem; color:#94a3b8">TOTAL USERS</p>
+            </div>
+            <div class="glass-card" style="text-align:center">
+                <h1 style="color:#22c55e">ONLINE</h1>
+                <p style="font-size:0.8rem; color:#94a3b8">SYSTEM STATUS</p>
+            </div>
+        </div>
+
+        <div class="glass-card" style="margin-top: 20px; border-color:#ef4444">
+            <h3><i class="fas fa-user-lock"></i> User Execution</h3>
+            <p style="color:#94a3b8; font-size:0.9rem; margin-bottom:15px">Masukkan Email User untuk melakukan Ban atau Ganti Role.</p>
+            
+            <div class="grid-2">
+                <input type="email" id="target-email" placeholder="Email Target...">
+                <select id="action-type">
+                    <option value="BANNED">⚠️ BAN PERMANENT</option>
+                    <option value="MARGA">Promote to Marga</option>
+                    <option value="ADMIN">Promote to Admin</option>
+                    <option value="MEMBER">Demote to Member</option>
+                </select>
+            </div>
+            <button id="btn-execute" class="btn-danger w-full">EKSEKUSI TARGET</button>
+        </div>
+
+        <div class="glass-card" style="margin-top: 20px;">
+            <h3><i class="fas fa-broadcast-tower"></i> Broadcast Media</h3>
+            <input type="text" id="m-title" placeholder="Judul Konten">
+            <input type="text" id="m-url" placeholder="Link YouTube/TikTok">
+            <button id="btn-post" class="btn-primary" style="width:100%">PUBLISH TO MEDIA.HTML</button>
         </div>
     </div>
+
     <script type="module">
-        import { db } from "./script.js";
-        import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
+        import { db, collection, addDoc, serverTimestamp, query, where, getDocs, updateDoc } from "./script.js";
+        
+        // Post Media Logic
         document.getElementById('btn-post').onclick = async () => {
             const t = document.getElementById('m-title').value;
             const u = document.getElementById('m-url').value;
-            if(!t || !u) return alert("Isi data!");
-            await addDoc(collection(db, "media_logs"), { title: t, url: u, type: u.includes("tiktok") ? "TikTok" : "YouTube", time: serverTimestamp() });
-            alert("Berhasil dipost!"); location.reload();
+            if(t && u) {
+                await addDoc(collection(db, "media_logs"), { title: t, url: u, type: "Update", time: serverTimestamp() });
+                alert("Media Terkirim!");
+            }
+        };
+
+        // Execution Logic (Simulasi cari user by email lalu update)
+        document.getElementById('btn-execute').onclick = async () => {
+            const email = document.getElementById('target-email').value;
+            const action = document.getElementById('action-type').value;
+            
+            // Mencari user berdasarkan email (Query)
+            const q = query(collection(db, "users"), where("email", "==", email));
+            const querySnapshot = await getDocs(q);
+            
+            if (!querySnapshot.empty) {
+                querySnapshot.forEach(async (doc) => {
+                    // Update Status/Role
+                    await updateDoc(doc.ref, { role: action === "BANNED" ? "MEMBER" : action, status: action === "BANNED" ? "BANNED" : "ACTIVE" });
+                    alert(`User ${email} berhasil di-set ke ${action}`);
+                });
+            } else {
+                alert("User tidak ditemukan!");
+            }
         };
     </script>
 </body>

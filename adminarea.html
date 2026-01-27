@@ -1,24 +1,31 @@
 <!DOCTYPE html>
 <html>
-<head><title>Admin Area</title><link rel="stylesheet" href="style.css"></head>
+<head><title>Admin HQ</title><link rel="stylesheet" href="style.css"></head>
 <body>
-    <nav class="navbar"><div>ADMIN HQ</div><div id="dynamic-nav" class="nav-links"></div></nav>
-
+    <nav class="navbar"><div class="logo" style="color:#3b82f6">ADMIN <span>HQ</span></div><div id="dynamic-nav" class="nav-links"></div></nav>
     <div class="container animate-up">
-        <div class="glass-card" style="border-left: 4px solid var(--neon-blue);">
-            <h3>Structure Organization</h3>
-            <ul>
-                <li>Head Admin: [Name]</li>
-                <li>Moderator: [Name]</li>
-                <li>Helper: [Name]</li>
-            </ul>
-        </div>
+        
+        <div class="grid-2">
+            <div class="glass-card">
+                <h3><i class="fas fa-comments"></i> Internal Discussion</h3>
+                <div style="height:300px; background:#000; border-radius:8px; margin-top:10px; padding:10px; color:#64748b">
+                    System: Chat room ready (Fitur ini bisa disambungkan ke global chat logic tapi filter khusus admin)
+                </div>
+            </div>
 
-        <div class="glass-card delay-1">
-            <h3>Internal Admin Discussion</h3>
-            <p>Chat khusus staff untuk mengoptimalkan website.</p>
-            <div style="height:200px; background:#000; border-radius:10px; padding:10px; color:#aaa;">
-                [Admin Chat System Placeholder]
+            <div class="glass-card">
+                <h3><i class="fas fa-tasks"></i> Priority Tasks</h3>
+                <div style="margin-top:15px">
+                    <label style="display:block; padding:10px; border-bottom:1px solid var(--border)">
+                        <input type="checkbox"> Moderasi Global Chat
+                    </label>
+                    <label style="display:block; padding:10px; border-bottom:1px solid var(--border)">
+                        <input type="checkbox"> Cek Laporan Bug Store
+                    </label>
+                    <label style="display:block; padding:10px;">
+                        <input type="checkbox"> Update Rules Discord
+                    </label>
+                </div>
             </div>
         </div>
     </div>

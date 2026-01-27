@@ -2,46 +2,63 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>L.P ZONE | Ecosystem</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>body { user-select: none; -webkit-user-select: none; }</style>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;800&display=swap" rel="stylesheet">
 </head>
-<body class="bg-dark text-white">
+<body>
     <nav class="navbar">
-        <div class="logo">L.P <span class="accent">ZONE</span></div>
+        <div class="logo">L.P <span>ZONE</span></div>
         <div id="dynamic-nav" class="nav-links"></div>
     </nav>
 
-    <div class="container animate-up">
-        <header class="hero text-center py-40">
-            <h1>DIGITAL <span class="text-blue">INNOVATION</span> HUB</h1>
-            <p class="text-gray">Platform terpadu untuk Pengembangan Script & Project Hub.</p>
-        </header>
+    <header class="hero animate-up">
+        <h1>FUTURE <span style="color:#3b82f6">DEVELOPMENT</span></h1>
+        <p>Ekosistem digital premium untuk Scripting, Roleplay, dan Manajemen Komunitas.</p>
+    </header>
 
-        <section class="glass-card mb-25">
-            <h3><i class="fas fa-play-circle text-red"></i> Media Logs</h3>
-            <div id="media-logs-container" class="grid-2 mt-15">
-                <p class="text-gray text-xs italic">Menunggu pembaruan media dari Owner...</p>
+    <div class="container">
+        <section class="grid-3 animate-up delay-1">
+            <div class="glass-card feature-box">
+                <i class="fas fa-shield-alt feature-icon"></i>
+                <h3>Secure System</h3>
+                <p style="color:#64748b; font-size:0.9rem">Proteksi data tingkat lanjut dan keamanan komunitas.</p>
+            </div>
+            <div class="glass-card feature-box">
+                <i class="fas fa-code feature-icon"></i>
+                <h3>High Quality</h3>
+                <p style="color:#64748b; font-size:0.9rem">Script SAMP & FiveM yang teruji dan optimal.</p>
+            </div>
+            <div class="glass-card feature-box">
+                <i class="fas fa-users feature-icon"></i>
+                <h3>Exclusive Marga</h3>
+                <p style="color:#64748b; font-size:0.9rem">Komunitas Noctyra yang solid dan terstruktur.</p>
             </div>
         </section>
 
-        <div class="grid-2">
-            <a href="https://digital-store-fikri.biz.id" target="_blank" class="project-card border-blue">
-                <i class="fas fa-shopping-cart fa-2x"></i>
+        <section class="glass-card animate-up delay-2" style="margin-top: 40px; text-align:center;">
+            <h2>About L.P Zone</h2>
+            <p style="color:#94a3b8; max-width:800px; margin:0 auto;">L.P Zone didirikan sebagai jembatan antara kebutuhan teknis developer game server dengan kebutuhan imersif para roleplayer. Kami menyediakan platform Store, Lab Riset, dan Komunitas Eksklusif dalam satu atap.</p>
+        </section>
+
+        <section class="grid-2 animate-up delay-3" style="margin-top: 40px; margin-bottom: 60px;">
+            <a href="https://digital-store-fikri.biz.id" target="_blank" class="glass-card project-card" style="border-left: 4px solid #10b981;">
+                <i class="fas fa-shopping-cart fa-2x" style="color:#10b981"></i>
                 <div>
-                    <h4>ZStore Official</h4>
-                    <p class="text-xs text-gray">Marketplace aset digital premium.</p>
+                    <h3>ZStore Official</h3>
+                    <p>Marketplace aset digital premium.</p>
                 </div>
             </a>
-            <a href="https://laboratorium-project.web.id" target="_blank" class="project-card border-purple">
-                <i class="fas fa-flask fa-2x"></i>
+            <a href="https://laboratorium-project.web.id" target="_blank" class="glass-card project-card" style="border-left: 4px solid #f59e0b;">
+                <i class="fas fa-flask fa-2x" style="color:#f59e0b"></i>
                 <div>
-                    <h4>Laboratorium Repo</h4>
-                    <p class="text-xs text-gray">Pusat riset dan repositori script SAMP.</p>
+                    <h3>Laboratorium Repo</h3>
+                    <p>Pusat riset dan repositori script.</p>
                 </div>
             </a>
-        </div>
+        </section>
     </div>
     <script type="module" src="script.js"></script>
 </body>

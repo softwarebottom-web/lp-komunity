@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head><title>General Chat</title><link rel="stylesheet" href="style.css"></head>
+<body>
+    <nav class="navbar"><div class="logo">PUBLIC <span>CHAT</span></div><div id="dynamic-nav" class="nav-links"></div></nav>
+    <div class="container animate-up">
+        <div class="glass-card" style="height:80vh; display:flex; flex-direction:column">
+            <div id="chat-box" style="flex:1; overflow-y:auto; padding-right:10px;">Loading...</div>
+            <div style="display:flex; gap:10px; margin-top:15px">
+                <input type="text" id="msg-in" placeholder="Ketik pesan..." style="margin:0">
+                <button id="send-btn" class="btn-primary">KIRIM</button>
+            </div>
+        </div>
+    </div>
+    <script type="module">
+        import { db, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, auth } from "./script.js";
+        
+        // Chat Logic
+        const q = query(collection(db, "global_chat"), orderBy("time", "asc"));
+        onSnapshot(q, (snap) => {
+            const b = document.getElementById('chat-box'); b.innerHTML = "";
+            snap.forEach(d => {
+                const m = d.data();
+                b.innerHTML += `<div style="margin-bottom:10px; padding:10px; background:rgba(255,255,255,0.05); border-radius:8px"><b style="color:#3b82f6">${m.name}</b>: ${m.text}</div>`;
+            });
+            b.scrollTop = b.scrollHeight;
+        });
+
+        document.getElementById('send-btn').onclick = async () => {
+            const t = document.getElementById('msg-in').value;
+            if(t && auth.currentUser) {
+                await addDoc(collection(db, "global_chat"), { name: auth.currentUser.displayName || auth.currentUser.email.split('@')[0], text: t, time: serverTimestamp() });
+                document.getElementById('msg-in').value = "";
+            }
+        };
+    </script>
+</body>
+</html>
