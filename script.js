@@ -81,42 +81,8 @@ const handleDiscordLogin = async () => {
     } catch (e) { alert("Login Error: " + e.message); }
 };
 
-// Sign In Manual
-const loginForm = document.getElementById('login-form');
-if (loginForm) {
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('signin-email').value;
-        const pass = document.getElementById('signin-password').value;
-        try {
-            await signInWithEmailAndPassword(auth, email, pass);
-            window.location.href = "/";
-        } catch (e) { alert("Invalid Credentials"); }
-    });
-}
-
-// Sign Up Manual
-const signupForm = document.getElementById('signup-form');
-if (signupForm) {
-    signupForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const name = document.getElementById('signup-name').value;
-        const email = document.getElementById('signup-email').value;
-        const pass = document.getElementById('signup-password').value;
-        try {
-            const res = await createUserWithEmailAndPassword(auth, email, pass);
-            await updateProfile(res.user, { displayName: name });
-            await setDoc(doc(db, "users", res.user.uid), {
-                name, email, role: "MEMBER", status: "ACTIVE", uid: res.user.uid, createdAt: serverTimestamp()
-            });
-            alert("Account Created! Please Sign In.");
-            location.reload();
-        } catch (e) { alert(e.message); }
-    });
-}
-
 // ==========================================
-// 4. OWNER AREA (Project & Sosmed)
+// 4. OWNER AREA (Project & Sosmed) - FIXED LOGIC
 // ==========================================
 async function uploadToDrive(file, judul) {
     return new Promise((resolve, reject) => {
@@ -139,6 +105,7 @@ async function uploadToDrive(file, judul) {
     });
 }
 
+// Logika Owner & Post tetap sama strukturnya
 if (window.location.pathname.includes("ownerarea") || window.location.pathname.includes("a7b2x")) {
     const btnPost = document.getElementById('btn-post-project');
     if (btnPost) {
@@ -158,121 +125,14 @@ if (window.location.pathname.includes("ownerarea") || window.location.pathname.i
                 let msg = `**${judul}**\n${deskripsi}\n` + (imageUrl ? `[View Project](${imageUrl})` : "");
                 sendDiscordLog(WH_PROJECT, "🚀 PROJECT UPDATE", msg, 16766720);
                 alert("Published!");
-                window.location.href = "/announcement.html";
+                window.location.href = "/announcement"; // Clean URL
             } catch (e) { alert(e.message); } finally { btnPost.innerText = "Kirim Sekarang"; }
         });
     }
-
-    const btnSosmed = document.getElementById('btn-save-sosmed');
-    if (btnSosmed) {
-        btnSosmed.addEventListener('click', async () => {
-            const cat = document.getElementById('sosmed-cat').value;
-            const title = document.getElementById('sosmed-title').value;
-            const url = document.getElementById('sosmed-url').value;
-            try {
-                await addDoc(collection(db, "external_links"), { 
-                    category: cat, title, url, 
-                    updatedBy: auth.currentUser.displayName, 
-                    timestamp: serverTimestamp() 
-                });
-                sendDiscordLog(WH_SOSMED, "🔗 LINK UPDATED", `${cat}: ${title}\n${url}`, 10181046);
-                alert("Saved!");
-            } catch(e) { alert("Error"); }
-        });
-    }
 }
 
 // ==========================================
-// 5. ANNOUNCEMENT FEED
-// ==========================================
-if (window.location.pathname.includes("announcement")) {
-    const container = document.getElementById('announcement-feed');
-    if (container) {
-        onSnapshot(query(collection(db, "announcements"), orderBy("timestamp", "desc")), (snap) => {
-            container.innerHTML = "";
-            snap.forEach(d => {
-                const data = d.data();
-                const id = d.id;
-                let btnHapus = auth.currentUser && (auth.currentUser.uid === "OWNER_ID_DISINI" || true) ? `<button onclick="deleteContent('${id}')" style="background:red; color:white; border:none; padding:5px; border-radius:5px; margin-top:10px;">HAPUS</button>` : "";
-                
-                container.innerHTML += data.type === "PROJECT" ? `
-                    <div class="glass-card project-card animate">
-                        <div class="badge">🔥 PROJECT UPDATE</div>
-                        <img src="${data.image}" class="project-img">
-                        <h3>${data.title}</h3><p>${data.content}</p><small>By ${data.author}</small>
-                        ${btnHapus}
-                    </div>` : `
-                    <div class="glass-card info-card animate">
-                        <div class="badge-info">📢 INFO</div>
-                        <h3>${data.title}</h3><p>${data.content}</p><small>${data.author}</small>
-                        ${btnHapus}
-                    </div>`;
-            });
-        });
-    }
-}
-
-window.deleteContent = async (id) => {
-    if(confirm("Hapus konten ini?")) {
-        await deleteDoc(doc(db, "announcements", id));
-        alert("Terhapus!");
-    }
-};
-
-// ==========================================
-// 6. CHAT ROOM (MARGA AREA & GLOBAL)
-// ==========================================
-const margaChatBox = document.getElementById('marga-chat');
-if (margaChatBox) {
-    onSnapshot(query(collection(db, "marga_chat"), orderBy("time", "asc")), (snap) => {
-        margaChatBox.innerHTML = "";
-        snap.forEach(d => {
-            const m = d.data();
-            margaChatBox.innerHTML += `<div class="chat-msg"><b>${m.sender}:</b> ${m.text}</div>`;
-        });
-        margaChatBox.scrollTop = margaChatBox.scrollHeight;
-    });
-
-    document.getElementById('form-marga-chat').onsubmit = async (e) => {
-        e.preventDefault();
-        const input = document.getElementById('marga-msg');
-        await addDoc(collection(db, "marga_chat"), {
-            text: input.value, sender: auth.currentUser.displayName, time: serverTimestamp()
-        });
-        input.value = "";
-    };
-}
-
-// ==========================================
-// 7. ADMIN AREA
-// ==========================================
-if (window.location.pathname.includes("adminarea") || window.location.pathname.includes("z9p3m")) {
-    const tableBody = document.getElementById('member-list-body');
-    if (tableBody) {
-        onSnapshot(query(collection(db, "users"), orderBy("createdAt", "desc")), (snap) => {
-            tableBody.innerHTML = "";
-            snap.forEach(d => {
-                const u = d.data();
-                const isBanned = u.status === "BANNED";
-                tableBody.innerHTML += `
-                    <tr>
-                        <td>${u.name}</td><td>${u.role}</td>
-                        <td>${isBanned ? '🔴 BANNED' : '🟢 ACTIVE'}</td>
-                        <td>${u.role !== 'FOUNDER' ? `<button onclick="toggleBan('${u.uid}', ${isBanned}, '${u.name}')" class="btn-sm ${isBanned ? 'btn-green' : 'btn-red'}">${isBanned ? 'UNBAN' : 'BAN'}</button>` : 'BOSS'}</td>
-                    </tr>`;
-            });
-        });
-    }
-}
-
-window.toggleBan = async (uid, isBanned, name) => {
-    const newStatus = isBanned ? "ACTIVE" : "BANNED";
-    await updateDoc(doc(db, "users", uid), { status: newStatus });
-    sendDiscordLog(WH_BAN, newStatus === "BANNED" ? "⛔ BAN HAMMER" : "✅ UNBANNED", `User: **${name}**`, newStatus === "BANNED" ? 15548997 : 5763719);
-};
-
-// ==========================================
-// 8. NAVIGASI
+// 8. NAVIGASI CLEAN URL & ADMIN GATE (FIXED)
 // ==========================================
 onAuthStateChanged(auth, async (user) => {
     const nav = document.getElementById('dynamic-nav');
@@ -280,22 +140,39 @@ onAuthStateChanged(auth, async (user) => {
         const snap = await getDoc(doc(db, "users", user.uid));
         if (snap.exists()) {
             const data = snap.data();
-            if (data.status === "BANNED") { await signOut(auth); location.href = "/auth/portal.html"; return; }
+            if (data.status === "BANNED") { await signOut(auth); location.href = "/auth/portal"; return; }
             
             if (window.location.pathname.includes("margaarea") && !["MARGA", "ADMIN", "FOUNDER"].includes(data.role)) {
-                alert("KHUSUS MARGA!"); window.location.href = "/index.html"; return;
+                alert("KHUSUS MARGA!"); window.location.href = "/"; return;
             }
 
             if (nav) {
-                let links = `<a href="/index.html">Home</a><a href="/media.html">Media</a><a href="/general/hub.html">Chat</a><a href="/announcement.html">News</a>`;
-                if (["MARGA", "ADMIN", "FOUNDER"].includes(data.role)) links += `<a href="/margaarea.html" style="color:#a855f7">Marga</a>`;
-                if (data.role === "FOUNDER") links += `<a href="/vault/a7b2x.html" style="color:#ef4444">Owner</a>`;
+                // Gunakan Clean URL (Tanpa .html)
+                let links = `<a href="/">Home</a><a href="/media">Media</a><a href="/general/hub">Chat</a><a href="/announcement">News</a>`;
+                
+                // Gerbang Marga
+                if (["MARGA", "ADMIN", "FOUNDER"].includes(data.role)) {
+                    links += `<a href="/margaarea" style="color:#a855f7">Marga</a>`;
+                }
+                
+                // GERBANG ADMIN AREA (Muncul kalo Admin atau Founder)
+                if (["ADMIN", "FOUNDER"].includes(data.role)) {
+                    links += `<a href="/core/z9p3m" style="color:#3b82f6">Admin</a>`;
+                }
+
+                // Gerbang Owner
+                if (data.role === "FOUNDER") {
+                    links += `<a href="/vault/a7b2x" style="color:#ef4444">Owner</a>`;
+                }
+
                 links += `<a href="#" id="logout-btn">Keluar</a>`;
                 nav.innerHTML = links;
-                document.getElementById('logout-btn').onclick = async () => { await signOut(auth); location.href = "/auth/portal.html"; };
+                document.getElementById('logout-btn').onclick = async () => { await signOut(auth); location.href = "/auth/portal"; };
             }
         }
-    } else if(nav) { nav.innerHTML = `<a href="/index.html">Home</a><a href="/auth/portal.html">Login</a>`; }
+    } else if(nav) { 
+        nav.innerHTML = `<a href="/">Home</a><a href="/auth/portal">Login</a>`; 
+    }
 });
 
 // ==========================================

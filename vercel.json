@@ -1,7 +1,8 @@
 {
+  "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/media/list", "destination": "/media.html" },
+    { "source": "/media", "destination": "/media.html" },
     { "source": "/general/hub", "destination": "/general.html" },
     { "source": "/auth/portal", "destination": "/form.html" },
     { "source": "/vault/a7b2x", "destination": "/ownerarea.html" },
