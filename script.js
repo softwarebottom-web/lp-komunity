@@ -18,7 +18,7 @@ const firebaseConfig = {
     appId: "1:709883143619:web:eab5fde631abdf7b548976"
 };
 
-const API_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycby-23cLw-mEEdNoaSQ7f_4Ocect4t5hPOizd_ehIpQQlTfs8xR5AZDQnu-0Y2ECJgga/exec";
+const API_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbxbPNp_7oEsSEh3v2s6tznJHKLvN4A-v4tVBanXjLtebcjxTenw_M_N79gVO59cRLGecA/exec";
 
 // URL WEBHOOKS
 const WH_LOGIN   = "https://discord.com/api/webhooks/1466147147056676916/qrbAgOSZv6EIHEvGn5YS73YAmvB5muFnK-n4NgpSD-HZdLWml_BPLYAJGTIkqNob6YmV";
@@ -72,7 +72,6 @@ const handleDiscordLogin = async () => {
                 alert("ACCESS DENIED: Banned.");
                 return;
             }
-            // Anti-Spam: Kirim log hanya jika login terakhir > 5 menit lalu
             if (!data.lastLogin || (now - data.lastLogin) > 300000) {
                 sendDiscordLog(WH_LOGIN, "🔐 USER LOGIN", `**${user.displayName}** has entered the zone.`, 3447003);
             }
@@ -82,7 +81,7 @@ const handleDiscordLogin = async () => {
     } catch (e) { alert("Login Error: " + e.message); }
 };
 
-// Sign In Manual (Email)
+// Sign In Manual
 const loginForm = document.getElementById('login-form');
 if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
@@ -96,7 +95,7 @@ if (loginForm) {
     });
 }
 
-// Sign Up Manual (Email)
+// Sign Up Manual
 const signupForm = document.getElementById('signup-form');
 if (signupForm) {
     signupForm.addEventListener('submit', async (e) => {
@@ -119,12 +118,17 @@ if (signupForm) {
 // ==========================================
 // 4. OWNER AREA (Project & Sosmed)
 // ==========================================
-async function uploadToDrive(file) {
+async function uploadToDrive(file, judul) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = async () => {
-            const payload = { nama: auth.currentUser.displayName, filename: file.name, file: reader.result };
+            const payload = { 
+                nama: auth.currentUser.displayName, 
+                filename: file.name, 
+                file: reader.result,
+                judul: judul
+            };
             try {
                 const res = await fetch(API_GOOGLE_SCRIPT, { method: "POST", body: JSON.stringify(payload) });
                 const data = await res.json();
@@ -135,7 +139,7 @@ async function uploadToDrive(file) {
     });
 }
 
-if (window.location.pathname.includes("ownerarea")) {
+if (window.location.pathname.includes("ownerarea") || window.location.pathname.includes("a7b2x")) {
     const btnPost = document.getElementById('btn-post-project');
     if (btnPost) {
         btnPost.addEventListener('click', async () => {
@@ -145,7 +149,7 @@ if (window.location.pathname.includes("ownerarea")) {
             if(!judul || !deskripsi) { alert("Isi Judul & Deskripsi!"); return; }
             btnPost.innerText = "Uploading...";
             try {
-                let imageUrl = fileInput.files.length > 0 ? await uploadToDrive(fileInput.files[0]) : "";
+                let imageUrl = fileInput.files.length > 0 ? await uploadToDrive(fileInput.files[0], judul) : "";
                 await addDoc(collection(db, "announcements"), {
                     type: imageUrl ? "PROJECT" : "INFO",
                     title: judul, content: deskripsi, image: imageUrl,
@@ -162,12 +166,16 @@ if (window.location.pathname.includes("ownerarea")) {
     const btnSosmed = document.getElementById('btn-save-sosmed');
     if (btnSosmed) {
         btnSosmed.addEventListener('click', async () => {
-            const tiktok = document.getElementById('link-tiktok').value;
-            const ig = document.getElementById('link-ig').value;
-            const yt = document.getElementById('link-yt').value;
+            const cat = document.getElementById('sosmed-cat').value;
+            const title = document.getElementById('sosmed-title').value;
+            const url = document.getElementById('sosmed-url').value;
             try {
-                await setDoc(doc(db, "settings", "social_media"), { tiktok, instagram: ig, youtube: yt, updatedBy: auth.currentUser.displayName, updatedAt: serverTimestamp() });
-                sendDiscordLog(WH_SOSMED, "📲 SOSMED UPDATED", `TikTok: ${tiktok}\nIG: ${ig}\nYT: ${yt}`, 10181046);
+                await addDoc(collection(db, "external_links"), { 
+                    category: cat, title, url, 
+                    updatedBy: auth.currentUser.displayName, 
+                    timestamp: serverTimestamp() 
+                });
+                sendDiscordLog(WH_SOSMED, "🔗 LINK UPDATED", `${cat}: ${title}\n${url}`, 10181046);
                 alert("Saved!");
             } catch(e) { alert("Error"); }
         });
@@ -182,63 +190,63 @@ if (window.location.pathname.includes("announcement")) {
     if (container) {
         onSnapshot(query(collection(db, "announcements"), orderBy("timestamp", "desc")), (snap) => {
             container.innerHTML = "";
-            snap.forEach(doc => {
-                const data = doc.data();
+            snap.forEach(d => {
+                const data = d.data();
+                const id = d.id;
+                let btnHapus = auth.currentUser && (auth.currentUser.uid === "OWNER_ID_DISINI" || true) ? `<button onclick="deleteContent('${id}')" style="background:red; color:white; border:none; padding:5px; border-radius:5px; margin-top:10px;">HAPUS</button>` : "";
+                
                 container.innerHTML += data.type === "PROJECT" ? `
                     <div class="glass-card project-card animate">
                         <div class="badge">🔥 PROJECT UPDATE</div>
                         <img src="${data.image}" class="project-img">
                         <h3>${data.title}</h3><p>${data.content}</p><small>By ${data.author}</small>
+                        ${btnHapus}
                     </div>` : `
                     <div class="glass-card info-card animate">
                         <div class="badge-info">📢 INFO</div>
                         <h3>${data.title}</h3><p>${data.content}</p><small>${data.author}</small>
+                        ${btnHapus}
                     </div>`;
             });
         });
     }
 }
 
+window.deleteContent = async (id) => {
+    if(confirm("Hapus konten ini?")) {
+        await deleteDoc(doc(db, "announcements", id));
+        alert("Terhapus!");
+    }
+};
+
 // ==========================================
-// 6. CHAT ROOM
+// 6. CHAT ROOM (MARGA AREA & GLOBAL)
 // ==========================================
-const chatBox = document.getElementById('chat-box');
-if (chatBox) {
-    onSnapshot(query(collection(db, "global_chat"), orderBy("time", "asc")), (snap) => {
-        chatBox.innerHTML = "";
+const margaChatBox = document.getElementById('marga-chat');
+if (margaChatBox) {
+    onSnapshot(query(collection(db, "marga_chat"), orderBy("time", "asc")), (snap) => {
+        margaChatBox.innerHTML = "";
         snap.forEach(d => {
-            const msg = d.data();
-            const isMe = auth.currentUser && msg.uid === auth.currentUser.uid;
-            let rColor = msg.role === "FOUNDER" ? "#ef4444" : msg.role === "ADMIN" ? "#3b82f6" : "#fff";
-            chatBox.innerHTML += `
-                <div class="chat-bubble ${isMe ? 'me' : 'other'} animate">
-                    <small style="color:${rColor}; font-weight:bold">${msg.sender}</small>
-                    <p>${msg.text}</p>
-                </div>`;
+            const m = d.data();
+            margaChatBox.innerHTML += `<div class="chat-msg"><b>${m.sender}:</b> ${m.text}</div>`;
         });
-        chatBox.scrollTop = chatBox.scrollHeight;
+        margaChatBox.scrollTop = margaChatBox.scrollHeight;
     });
 
-    const formChat = document.getElementById('chat-form');
-    if(formChat) {
-        formChat.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const input = document.getElementById('msg-input');
-            if(!input.value.trim()) return;
-            const userSnap = await getDoc(doc(db, "users", auth.currentUser.uid));
-            await addDoc(collection(db, "global_chat"), {
-                text: input.value, sender: auth.currentUser.displayName,
-                uid: auth.currentUser.uid, role: userSnap.data().role, time: serverTimestamp()
-            });
-            input.value = "";
+    document.getElementById('form-marga-chat').onsubmit = async (e) => {
+        e.preventDefault();
+        const input = document.getElementById('marga-msg');
+        await addDoc(collection(db, "marga_chat"), {
+            text: input.value, sender: auth.currentUser.displayName, time: serverTimestamp()
         });
-    }
+        input.value = "";
+    };
 }
 
 // ==========================================
 // 7. ADMIN AREA
 // ==========================================
-if (window.location.pathname.includes("adminarea")) {
+if (window.location.pathname.includes("adminarea") || window.location.pathname.includes("z9p3m")) {
     const tableBody = document.getElementById('member-list-body');
     if (tableBody) {
         onSnapshot(query(collection(db, "users"), orderBy("createdAt", "desc")), (snap) => {
@@ -250,7 +258,7 @@ if (window.location.pathname.includes("adminarea")) {
                     <tr>
                         <td>${u.name}</td><td>${u.role}</td>
                         <td>${isBanned ? '🔴 BANNED' : '🟢 ACTIVE'}</td>
-                        <td>${u.role !== 'FOUNDER' ? `<button onclick="toggleBan('${u.uid}', ${isBanned}, '${u.name}')" class="btn-sm ${isBanned ? 'btn-green' : 'btn-red'}">${isBanned ? 'UNBAN' : 'BAN AXE'}</button>` : 'BOSS'}</td>
+                        <td>${u.role !== 'FOUNDER' ? `<button onclick="toggleBan('${u.uid}', ${isBanned}, '${u.name}')" class="btn-sm ${isBanned ? 'btn-green' : 'btn-red'}">${isBanned ? 'UNBAN' : 'BAN'}</button>` : 'BOSS'}</td>
                     </tr>`;
             });
         });
@@ -272,45 +280,37 @@ onAuthStateChanged(auth, async (user) => {
         const snap = await getDoc(doc(db, "users", user.uid));
         if (snap.exists()) {
             const data = snap.data();
-            if (data.status === "BANNED") { await signOut(auth); location.href = "/auth/portal"; return; }
+            if (data.status === "BANNED") { await signOut(auth); location.href = "/auth/portal.html"; return; }
+            
+            if (window.location.pathname.includes("margaarea") && !["MARGA", "ADMIN", "FOUNDER"].includes(data.role)) {
+                alert("KHUSUS MARGA!"); window.location.href = "/index.html"; return;
+            }
+
             if (nav) {
-                let links = `<a href="/">Home</a><a href="/media">Media</a><a href="/general/hub">Chat</a><a href="/announcement.html">News</a>`;
-                if (data.role === "FOUNDER") links += `<a href="/vault/a7b2x" style="color:#ef4444">Owner</a>`;
-                if (["FOUNDER", "ADMIN"].includes(data.role)) links += `<a href="/core/z9p3m" style="color:#3b82f6">Admin</a>`;
-                links += `<a href="#" id="btn-logout-nav">Keluar</a>`;
+                let links = `<a href="/index.html">Home</a><a href="/media.html">Media</a><a href="/general/hub.html">Chat</a><a href="/announcement.html">News</a>`;
+                if (["MARGA", "ADMIN", "FOUNDER"].includes(data.role)) links += `<a href="/margaarea.html" style="color:#a855f7">Marga</a>`;
+                if (data.role === "FOUNDER") links += `<a href="/vault/a7b2x.html" style="color:#ef4444">Owner</a>`;
+                links += `<a href="#" id="logout-btn">Keluar</a>`;
                 nav.innerHTML = links;
-                document.getElementById('btn-logout-nav').onclick = async () => { await signOut(auth); location.href = "/auth/portal"; };
+                document.getElementById('logout-btn').onclick = async () => { await signOut(auth); location.href = "/auth/portal.html"; };
             }
         }
-    } else if(nav) { nav.innerHTML = `<a href="/">Home</a><a href="/auth/portal">Login</a>`; }
+    } else if(nav) { nav.innerHTML = `<a href="/index.html">Home</a><a href="/auth/portal.html">Login</a>`; }
 });
 
 // ==========================================
-// 9. SECURITY SYSTEM (BLOKIR INSPECT & COPY)
+// 9. SECURITY SYSTEM
 // ==========================================
 const enableSecurity = () => {
-    // 1. Blokir Klik Kanan
     document.addEventListener('contextmenu', e => e.preventDefault());
-
-    // 2. Blokir Shortcuts (F12, Ctrl+Shift+I, Ctrl+U, dll)
     document.onkeydown = function(e) {
-        if (e.keyCode == 123) return false; // F12
-        if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; // Ctrl+Shift+I
-        if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false; // Ctrl+Shift+C
-        if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; // Ctrl+Shift+J
-        if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U
+        if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73, 67, 74].includes(e.keyCode)) || (e.ctrlKey && e.keyCode == 85)) return false;
     };
-
-    // 3. Blokir Copy-Paste (Optional, aktifkan jika mau)
     document.addEventListener('copy', e => e.preventDefault());
-    
-    // 4. Mencegah Drag Gambar
-    document.addEventListener('dragstart', e => e.preventDefault());
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-    enableSecurity(); // Jalankan Keamanan
-    
+    enableSecurity();
     const btnIn = document.getElementById('btn-login-discord-in');
     const btnUp = document.getElementById('btn-login-discord-up');
     if (btnIn) btnIn.addEventListener('click', handleDiscordLogin);
