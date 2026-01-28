@@ -2,12 +2,16 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebas
 import { getAuth, onAuthStateChanged, signOut, OAuthProvider, signInWithPopup, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, updateDoc } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-firestore.js";
 
+// --- CONFIG BARU (LPZONE) ---
 const firebaseConfig = {
-    apiKey: "AIzaSyCshVgfvU3OGL9ZuLOYsJZxLACxdVDDZYk",
-    authDomain: "lpsquad-e4aad.firebaseapp.com",
-    projectId: "lpsquad-e4aad",
-    storageBucket: "lpsquad-e4aad.firebasestorage.app",
-    appId: "1:390296155151:web:59775d3ce079c36b021f7a"
+    apiKey: "AIzaSyDLX4gTNGw_IQSdhXtSBl3utqCKFiwR2Hk",
+    authDomain: "lpzone.firebaseapp.com",
+    databaseURL: "https://lpzone-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "lpzone",
+    storageBucket: "lpzone.firebasestorage.app",
+    messagingSenderId: "709883143619",
+    appId: "1:709883143619:web:eab5fde631abdf7b548976",
+    measurementId: "G-GLR30SRDEL"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -15,21 +19,19 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 // ==========================================
-// 1. FUNGSI AUTHENTICATION (LOGIN/LOGOUT)
+// 1. FUNGSI AUTHENTICATION
 // ==========================================
 
-// Fungsi Login Discord
 const handleDiscordLogin = async () => {
-    // Pastikan Provider ID sesuai dengan di Firebase Console kamu
-    // Kalau pakai Native Discord Auth: 'discord.com'
-    // Kalau pakai OIDC Custom: 'oidc.discord' (Pakai yg ini sesuai script lama lu)
+    // Pastikan di Firebase Console > Auth > Sign-in method
+    // Lu udah Add Provider > OpenID Connect > kasih nama "discord"
     const provider = new OAuthProvider('oidc.discord'); 
     
     try {
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
         
-        // Cek/Buat User di Database
+        // Simpan Data User ke Firestore
         const userRef = doc(db, "users", user.uid);
         const snap = await getDoc(userRef);
 
@@ -40,20 +42,20 @@ const handleDiscordLogin = async () => {
                 role: "MEMBER",
                 status: "ACTIVE",
                 photo: user.photoURL,
-                uid: user.uid
+                uid: user.uid,
+                createdAt: serverTimestamp()
             });
         }
         
-        window.location.href = "/"; // Redirect ke Home
+        window.location.href = "/"; 
     } catch (e) {
         alert("Gagal Login Discord: " + e.message);
         console.error(e);
     }
 };
 
-// Fungsi Login Email/Password (Untuk Admin/Owner biasanya)
 const handleEmailLogin = async (e) => {
-    e.preventDefault(); // Biar gak reload halaman
+    e.preventDefault(); 
     const email = document.getElementById('email-input').value;
     const pass = document.getElementById('password-input').value;
 
@@ -65,36 +67,21 @@ const handleEmailLogin = async (e) => {
     }
 };
 
-// Fungsi Logout
 const handleLogout = async () => {
     await signOut(auth);
     window.location.href = "/auth/portal";
 };
 
-
 // ==========================================
 // 2. EVENT LISTENER (PENYADAP TOMBOL)
 // ==========================================
-// Ini pengganti onclick di HTML. Script akan mencari ID tombol dan memasang fungsi.
-
 document.addEventListener("DOMContentLoaded", () => {
-    
-    // Cari tombol Discord
     const btnDiscord = document.getElementById('btn-login-discord');
-    if (btnDiscord) {
-        btnDiscord.addEventListener('click', handleDiscordLogin);
-    }
+    if (btnDiscord) btnDiscord.addEventListener('click', handleDiscordLogin);
 
-    // Cari Form Login Email
     const formLogin = document.getElementById('login-form');
-    if (formLogin) {
-        formLogin.addEventListener('submit', handleEmailLogin);
-    }
-
-    // Cari tombol Logout
-    // (Kita pasang di dalam observer di bawah karena tombolnya dinamis)
+    if (formLogin) formLogin.addEventListener('submit', handleEmailLogin);
 });
-
 
 // ==========================================
 // 3. NAVIGASI & PROTEKSI HALAMAN
@@ -102,7 +89,6 @@ document.addEventListener("DOMContentLoaded", () => {
 const navContainer = document.getElementById('dynamic-nav');
 
 onAuthStateChanged(auth, async (user) => {
-    // A. JIKA USER LOGIN
     if (user) {
         const userRef = doc(db, "users", user.uid);
         const snap = await getDoc(userRef);
@@ -110,7 +96,6 @@ onAuthStateChanged(auth, async (user) => {
         if (snap.exists()) {
             const data = snap.data();
 
-            // Cek Banned
             if (data.status === "BANNED") {
                 alert("AKUN ANDA DIBEKUKAN!");
                 await signOut(auth);
@@ -118,7 +103,6 @@ onAuthStateChanged(auth, async (user) => {
                 return;
             }
 
-            // Render Navigasi
             if (navContainer) {
                 let links = `
                     <a href="/">Home</a>
@@ -133,25 +117,19 @@ onAuthStateChanged(auth, async (user) => {
                 links += `<a href="#" id="btn-logout-nav">Keluar</a>`;
                 navContainer.innerHTML = links;
 
-                // Pasang Event Listener Logout (karena tombol baru muncul)
                 document.getElementById('btn-logout-nav').addEventListener('click', handleLogout);
             }
         }
-    } 
-    // B. JIKA TIDAK LOGIN
-    else {
+    } else {
         if (navContainer) {
             navContainer.innerHTML = `<a href="/">Home</a><a href="/auth/portal">Login</a>`;
         }
     }
 });
 
-
 // ==========================================
-// 4. FITUR HALAMAN LAIN (MEDIA & CHAT)
+// 4. FITUR MEDIA & CHAT
 // ==========================================
-
-// Media Gallery
 const mediaContainer = document.getElementById('media-gallery');
 if (mediaContainer) {
     const q = query(collection(db, "media_logs"), orderBy("time", "desc"));
@@ -169,7 +147,6 @@ if (mediaContainer) {
     });
 }
 
-// Global Chat
 const chatBox = document.getElementById('chat-box');
 if (chatBox) {
     const qChat = query(collection(db, "global_chat"), orderBy("time", "asc"));
@@ -191,8 +168,7 @@ if (chatBox) {
 // Security
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.onkeydown = (e) => {
-    if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73,74,67].includes(e.keyCode)) || (e.ctrlKey && e.keyCode==85)) return false;
+    if(e.keyCode == 123 || (e.ctrlKey && e.keyCode==85)) return false;
 };
 
-// Export (Opsional, tapi bagus buat masa depan)
 export { auth, db };
