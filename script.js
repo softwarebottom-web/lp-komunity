@@ -16,49 +16,64 @@ const db = getFirestore(app);
 
 // --- 1. NAVIGASI DINAMIS & CEK BAN (SINKRON DENGAN VERCEL.JSON) ---
 const navContainer = document.getElementById('dynamic-nav');
-if (navContainer) {
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            const userRef = doc(db, "users", user.uid);
-            const snap = await getDoc(userRef);
-            
-            // LOGIKA BAN USER
-            if (snap.exists() && snap.data().status === "BANNED") {
+
+// Fungsi pembantu untuk render link agar tidak duplikat
+const renderNav = (role, status) => {
+    if (!navContainer) return;
+
+    if (status === "BANNED") {
+        navContainer.innerHTML = `<a href="/">Home</a><a href="/auth/portal">Login</a>`;
+        return;
+    }
+
+    let links = `
+        <a href="/">Home</a>
+        <a href="/media/list">Media</a>
+        <a href="/general/hub">Chat</a>
+    `;
+    
+    if (role === "FOUNDER") links += `<a href="/vault/a7b2x" style="color:#ef4444">Owner</a>`;
+    if (["FOUNDER", "ADMIN"].includes(role)) links += `<a href="/core/z9p3m" style="color:#3b82f6">Admin</a>`;
+    if (["FOUNDER", "ADMIN", "MARGA"].includes(role)) links += `<a href="/sector/n1o4c" style="color:#a855f7">Noctyra</a>`;
+    
+    links += `<a href="#" id="btn-logout">Keluar</a>`;
+    navContainer.innerHTML = links;
+
+    // Pasang event listener logout setelah elemen dibuat
+    const logoutBtn = document.getElementById('btn-logout');
+    if (logoutBtn) {
+        logoutBtn.onclick = (e) => {
+            e.preventDefault();
+            signOut(auth).then(() => window.location.href = "/auth/portal");
+        };
+    }
+};
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        const userRef = doc(db, "users", user.uid);
+        const snap = await getDoc(userRef);
+        
+        if (snap.exists()) {
+            const userData = snap.data();
+            if (userData.status === "BANNED") {
                 alert("AKUN ANDA DIBEKUKAN OLEH OWNER.");
                 await signOut(auth);
-                window.location.href = "/auth/portal"; // Sesuaikan ke path vercel.json
+                window.location.href = "/auth/portal";
                 return;
             }
-
-            const role = snap.exists() ? snap.data().role : "MEMBER";
-            
-            // Menggunakan URL Path dari vercel.json (Tanpa .html)
-            let links = `
-                <a href="/">Home</a>
-                <a href="/media/list">Media</a>
-                <a href="/general/hub">Chat</a>
-            `;
-            
-            if (role === "FOUNDER") links += `<a href="/vault/a7b2x" style="color:#ef4444">Owner</a>`;
-            if (["FOUNDER", "ADMIN"].includes(role)) links += `<a href="/core/z9p3m" style="color:#3b82f6">Admin</a>`;
-            if (["FOUNDER", "ADMIN", "MARGA"].includes(role)) links += `<a href="/sector/n1o4c" style="color:#a855f7">Noctyra</a>`;
-            
-            links += `<a href="#" id="btn-logout">Keluar</a>`;
-            navContainer.innerHTML = links;
-            
-            setTimeout(() => {
-                const logoutBtn = document.getElementById('btn-logout');
-                if(logoutBtn) {
-                    logoutBtn.onclick = () => signOut(auth).then(() => window.location.href = "/auth/portal");
-                }
-            }, 500);
+            renderNav(userData.role, userData.status);
         } else {
+            renderNav("MEMBER", "ACTIVE");
+        }
+    } else {
+        if (navContainer) {
             navContainer.innerHTML = `<a href="/">Home</a><a href="/auth/portal">Login</a>`;
         }
-    });
-}
+    }
+});
 
-// --- 2. MEDIA LOGS RENDERER (Khusus media.html / /media/list) ---
+// --- 2. MEDIA LOGS RENDERER ---
 const logsContainer = document.getElementById('media-gallery');
 if (logsContainer) {
     const q = query(collection(db, "media_logs"), orderBy("time", "desc"));
@@ -76,17 +91,16 @@ if (logsContainer) {
     });
 }
 
-// --- 3. SECURITY SYSTEM (ANTI-COPY & ANTI-F12) ---
+// --- 3. SECURITY SYSTEM ---
 document.addEventListener('contextmenu', event => event.preventDefault()); 
 document.addEventListener('selectstart', event => event.preventDefault());
 
 document.onkeydown = function(e) {
     if (e.keyCode == 123 || 
-        (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'C'.charCodeAt(0) || e.keyCode == 'J'.charCodeAt(0))) ||
-        (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0))) {
+        (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 67 || e.keyCode == 74)) ||
+        (e.ctrlKey && e.keyCode == 85)) {
         return false;
     }
 }
 
-// --- 4. EXPORT UNTUK DIGUNAKAN DI HTML ---
 export { auth, db, doc, getDoc, setDoc, updateDoc, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot };
