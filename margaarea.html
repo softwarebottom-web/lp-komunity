@@ -3,53 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NOCTYRA - MARGA AREA</title>
+    <title>NOCTYRA HQ</title>
     <link rel="stylesheet" href="/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="container animate">
-        <header style="text-align: center; margin-bottom: 30px;">
-            <h1 class="logo-text" style="background: linear-gradient(to right, #a855f7, #ffffff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">MARGA HUB</h1>
-            <p style="color: #94a3b8; font-size: 12px; letter-spacing: 2px;">FAMILY • LOYALTY • RESPECT</p>
-        </header>
+    <div class="container animate" style="padding-bottom: 120px;">
+        <h1 style="color: #a855f7; text-align: center; margin: 30px 0;">🟣 NOCTYRA HQ</h1>
 
-        <div id="marga-profile" class="glass-card" style="border-left: 5px solid #a855f7;">
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <img id="user-photo" src="https://via.placeholder.com/50" style="border-radius: 50%; border: 2px solid #a855f7;">
-                <div>
-                    <h4 id="user-name">Loading...</h4>
-                    <span class="badge" style="background: #a855f7; color: white;">MEMBER MARGA</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="grid-2">
-            <div class="glass-card" style="text-align: center;">
-                <i class="fas fa-file-signature" style="font-size: 24px; color: #a855f7;"></i>
-                <h4 style="margin-top: 10px;">Laporan</h4>
-                <p style="font-size: 10px; color: #64748b;">Setor laporan project/aset.</p>
-                <button onclick="location.href='/media'" class="btn-primary" style="padding: 8px; font-size: 10px; margin-top: 10px; background: #a855f7; color:white;">BUAT LAPORAN</button>
-            </div>
-            
-            <div class="glass-card" style="text-align: center;">
-                <i class="fas fa-shield-alt" style="font-size: 24px; color: #a855f7;"></i>
-                <h4 style="margin-top: 10px;">Rules</h4>
-                <p style="font-size: 10px; color: #64748b;">Pedoman inti Noctyra.</p>
-                <button class="btn-primary" style="padding: 8px; font-size: 10px; margin-top: 10px; background: #a855f7; color:white;">LIHAT ATURAN</button>
-            </div>
+        <div class="glass-card marga-card">
+            <h3>🏴‍☠️ GANGSTER TALK</h3>
+            <p style="font-size: 13px; font-style: italic; color: #a855f7; margin-top: 10px;">
+                "Dengerin ya fam, Noctyra itu darah. Sekali masuk, lu bagian dari keluarga. Main bersih di kodingan, main sangar di aspal. Loyalty is everything, ops get nothing!"
+            </p>
         </div>
 
         <div class="glass-card">
-            <h3><i class="fas fa-stream"></i> Marga Bulletin</h3>
-            <div id="marga-bulletin" style="margin-top: 15px;">
-                <p style="color: #64748b; font-size: 12px;">Memuat informasi internal...</p>
+            <h4>💬 FAMILY RADIO</h4>
+            <div id="marga-chat" style="height: 250px; overflow-y: auto; margin: 15px 0;">
+                <p style="color: #555; text-align: center;">Menyambungkan frekuensi...</p>
             </div>
+            <form id="form-marga-chat" style="display: flex; gap: 8px;">
+                <input type="text" id="marga-msg" placeholder="Ketik pesan, fam..." required style="margin: 0;">
+                <button type="submit" class="btn-primary" style="width: 60px; background: #a855f7; color: white;">🚀</button>
+            </form>
         </div>
     </div>
-
     <nav id="dynamic-nav"></nav>
-
     <script src="/script.js" type="module"></script>
 </body>
 </html>

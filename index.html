@@ -1,27 +1,44 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link rel="stylesheet" href="style.css">
+    <title>L.P ZONE - HOME</title>
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
     <div class="container animate">
-        <div style="text-align: center; margin: 40px 0;">
-            <h1 style="font-size: 40px; font-weight: 800; color: var(--primary);">L.P ZONE</h1>
-            <p style="color: #888;">Founder & Roleplayer Community</p>
-        </div>
-
-        <div id="auth-status" class="glass-card">
-            <p>Memuat status...</p>
-        </div>
+        <header style="text-align: center; margin: 40px 0;">
+            <h1 class="logo-text">L.P ZONE</h1>
+            <p style="color: #888; font-size: 12px; letter-spacing: 2px;">DEV & ROLEPLAY COMMUNITY</p>
+        </header>
 
         <div class="glass-card">
-            <h3>🚀 Recent Project</h3>
-            <p style="font-size: 13px;">Lihat update terbaru dari founder di menu News.</p>
+            <h3>📍 ABOUT L.P ZONE</h3>
+            <p style="font-size: 13px; color: #cbd5e1; margin-top: 10px;">
+                Wadah buat lu yang mau belajar scripting (Pawn, JS, Web) sambil main roleplay. 
+                Gak ada suhu, gak ada newbie, kita semua sama-sama belajar di sini.
+            </p>
+        </div>
+
+        <div class="grid-2">
+            <div class="glass-card" style="text-align: center; cursor: pointer;" onclick="window.location.href='https://lpzone.web.id'">
+                <h4 style="color: var(--primary);">🧪 LAB PROJECT</h4>
+                <p style="font-size: 10px; color: #888;">Cek hasil riset script.</p>
+            </div>
+            <div class="glass-card" style="text-align: center; cursor: pointer;" onclick="window.location.href='https://digital-store-fikri.biz.id'">
+                <h4 style="color: var(--secondary);">🛒 LP STORE</h4>
+                <p style="font-size: 10px; color: #888;">Beli aset premium.</p>
+            </div>
+        </div>
+
+        <div class="glass-card marga-card">
+            <h3 style="color: #a855f7;">⚡ NOCTYRA ELITE</h3>
+            <p style="font-size: 12px; margin-top: 5px;">Special Family of L.P Zone. Join the Underground.</p>
+            <button class="btn-primary" onclick="location.href='/margaarea.html'" style="background: #a855f7; color: white; margin-top: 10px;">ENTER HEADQUARTER</button>
         </div>
     </div>
-
     <nav id="dynamic-nav"></nav>
-    <script src="script.js" type="module"></script>
+    <script src="/script.js" type="module"></script>
 </body>
 </html>

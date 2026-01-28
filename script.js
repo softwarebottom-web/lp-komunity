@@ -285,7 +285,32 @@ onAuthStateChanged(auth, async (user) => {
     } else if(nav) { nav.innerHTML = `<a href="/">Home</a><a href="/auth/portal">Login</a>`; }
 });
 
+// ==========================================
+// 9. SECURITY SYSTEM (BLOKIR INSPECT & COPY)
+// ==========================================
+const enableSecurity = () => {
+    // 1. Blokir Klik Kanan
+    document.addEventListener('contextmenu', e => e.preventDefault());
+
+    // 2. Blokir Shortcuts (F12, Ctrl+Shift+I, Ctrl+U, dll)
+    document.onkeydown = function(e) {
+        if (e.keyCode == 123) return false; // F12
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false; // Ctrl+Shift+I
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false; // Ctrl+Shift+C
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false; // Ctrl+Shift+J
+        if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false; // Ctrl+U
+    };
+
+    // 3. Blokir Copy-Paste (Optional, aktifkan jika mau)
+    document.addEventListener('copy', e => e.preventDefault());
+    
+    // 4. Mencegah Drag Gambar
+    document.addEventListener('dragstart', e => e.preventDefault());
+};
+
 document.addEventListener("DOMContentLoaded", () => {
+    enableSecurity(); // Jalankan Keamanan
+    
     const btnIn = document.getElementById('btn-login-discord-in');
     const btnUp = document.getElementById('btn-login-discord-up');
     if (btnIn) btnIn.addEventListener('click', handleDiscordLogin);
