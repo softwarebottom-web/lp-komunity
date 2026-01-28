@@ -1,77 +1,38 @@
 <!DOCTYPE html>
-<html>
-<head><title>Owner Command</title><link rel="stylesheet" href="/style.css"></head>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OWNER PANEL</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
 <body>
-    <nav class="navbar"><div class="logo" style="color:#ef4444">OWNER <span>CMD</span></div><div id="dynamic-nav" class="nav-links"></div></nav>
-    
-    <div class="container animate-up">
-        <div class="grid-3 mb-20">
-            <div class="glass-card" style="text-align:center">
-                <h1 id="stat-users">---</h1>
-                <p style="font-size:0.8rem; color:#94a3b8">TOTAL USERS</p>
-            </div>
-            <div class="glass-card" style="text-align:center">
-                <h1 style="color:#22c55e">ONLINE</h1>
-                <p style="font-size:0.8rem; color:#94a3b8">SYSTEM STATUS</p>
-            </div>
+    <div class="container animate" style="padding-bottom: 80px;">
+        <div class="glass-card" style="border: 1px solid var(--danger);">
+            <h2 style="color: var(--danger);">FOUNDER CONTROL</h2>
         </div>
 
-        <div class="glass-card" style="margin-top: 20px; border-color:#ef4444">
-            <h3><i class="fas fa-user-lock"></i> User Execution</h3>
-            <p style="color:#94a3b8; font-size:0.9rem; margin-bottom:15px">Masukkan Email User untuk melakukan Ban atau Ganti Role.</p>
-            
-            <div class="grid-2">
-                <input type="email" id="target-email" placeholder="Email Target...">
-                <select id="action-type">
-                    <option value="BANNED">⚠️ BAN PERMANENT</option>
-                    <option value="MARGA">Promote to Marga</option>
-                    <option value="ADMIN">Promote to Admin</option>
-                    <option value="MEMBER">Demote to Member</option>
-                </select>
-            </div>
-            <button id="btn-execute" class="btn-danger w-full">EKSEKUSI TARGET</button>
+        <div class="glass-card">
+            <h3>🚀 Post Project</h3>
+            <input type="text" id="inp-judul" placeholder="Judul Project">
+            <textarea id="inp-desc" placeholder="Rincian progress..." rows="4"></textarea>
+            <label class="file-label">
+                <span>📸 Pilih Foto Project</span>
+                <input type="file" id="inp-file-project" accept="image/*">
+            </label>
+            <button id="btn-post-project" class="btn-primary">Kirim ke Drive & News</button>
         </div>
 
-        <div class="glass-card" style="margin-top: 20px;">
-            <h3><i class="fas fa-broadcast-tower"></i> Broadcast Media</h3>
-            <input type="text" id="m-title" placeholder="Judul Konten">
-            <input type="text" id="m-url" placeholder="Link YouTube/TikTok">
-            <button id="btn-post" class="btn-primary" style="width:100%">PUBLISH TO MEDIA.HTML</button>
+        <div class="glass-card">
+            <h3>🔗 Update Sosmed</h3>
+            <input type="text" id="link-tiktok" placeholder="URL TikTok">
+            <input type="text" id="link-ig" placeholder="URL Instagram">
+            <input type="text" id="link-yt" placeholder="URL YouTube">
+            <button id="btn-save-sosmed" class="btn-secondary">Update Sosmed Log</button>
         </div>
     </div>
 
-    <script type="module">
-        import { db, collection, addDoc, serverTimestamp, query, where, getDocs, updateDoc } from "/script.js";
-        
-        // Post Media Logic
-        document.getElementById('btn-post').onclick = async () => {
-            const t = document.getElementById('m-title').value;
-            const u = document.getElementById('m-url').value;
-            if(t && u) {
-                await addDoc(collection(db, "media_logs"), { title: t, url: u, type: "Update", time: serverTimestamp() });
-                alert("Media Terkirim!");
-            }
-        };
-
-        // Execution Logic (Simulasi cari user by email lalu update)
-        document.getElementById('btn-execute').onclick = async () => {
-            const email = document.getElementById('target-email').value;
-            const action = document.getElementById('action-type').value;
-            
-            // Mencari user berdasarkan email (Query)
-            const q = query(collection(db, "users"), where("email", "==", email));
-            const querySnapshot = await getDocs(q);
-            
-            if (!querySnapshot.empty) {
-                querySnapshot.forEach(async (doc) => {
-                    // Update Status/Role
-                    await updateDoc(doc.ref, { role: action === "BANNED" ? "MEMBER" : action, status: action === "BANNED" ? "BANNED" : "ACTIVE" });
-                    alert(`User ${email} berhasil di-set ke ${action}`);
-                });
-            } else {
-                alert("User tidak ditemukan!");
-            }
-        };
-    </script>
+    <nav id="dynamic-nav"></nav>
+    <script src="/script.js" type="module"></script>
 </body>
 </html>
