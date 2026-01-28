@@ -17,7 +17,6 @@ const db = getFirestore(app);
 // --- 1. NAVIGASI DINAMIS & CEK BAN (SINKRON DENGAN VERCEL.JSON) ---
 const navContainer = document.getElementById('dynamic-nav');
 
-// Fungsi pembantu untuk render link agar tidak duplikat
 const renderNav = (role, status) => {
     if (!navContainer) return;
 
@@ -26,6 +25,7 @@ const renderNav = (role, status) => {
         return;
     }
 
+    // Menggunakan path bersih sesuai vercel.json
     let links = `
         <a href="/">Home</a>
         <a href="/media/list">Media</a>
@@ -39,7 +39,6 @@ const renderNav = (role, status) => {
     links += `<a href="#" id="btn-logout">Keluar</a>`;
     navContainer.innerHTML = links;
 
-    // Pasang event listener logout setelah elemen dibuat
     const logoutBtn = document.getElementById('btn-logout');
     if (logoutBtn) {
         logoutBtn.onclick = (e) => {
