@@ -31,7 +31,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 // ==========================================
-// 2. FUNGSI LOG DISCORD (Anti-Spam Ready)
+// 2. FUNGSI LOG DISCORD
 // ==========================================
 async function sendDiscordLog(webhookUrl, title, message, color) {
     if (!webhookUrl) return;
@@ -47,7 +47,7 @@ async function sendDiscordLog(webhookUrl, title, message, color) {
 }
 
 // ==========================================
-// 3. AUTHENTICATION (Login & Sign Up)
+// 3. AUTHENTICATION
 // ==========================================
 const handleDiscordLogin = async () => {
     const provider = new OAuthProvider('oidc.discord'); 
@@ -82,7 +82,7 @@ const handleDiscordLogin = async () => {
 };
 
 // ==========================================
-// 4. OWNER AREA (Project & Sosmed) - FIXED LOGIC
+// 4. OWNER AREA (Upload Fixed)
 // ==========================================
 async function uploadToDrive(file, judul) {
     return new Promise((resolve, reject) => {
@@ -105,8 +105,8 @@ async function uploadToDrive(file, judul) {
     });
 }
 
-// Logika Owner & Post tetap sama strukturnya
-if (window.location.pathname.includes("ownerarea") || window.location.pathname.includes("a7b2x")) {
+// Logic Owner Post
+if (window.location.pathname.includes("vault/a7b2x") || window.location.pathname.includes("ownerarea")) {
     const btnPost = document.getElementById('btn-post-project');
     if (btnPost) {
         btnPost.addEventListener('click', async () => {
@@ -122,17 +122,16 @@ if (window.location.pathname.includes("ownerarea") || window.location.pathname.i
                     title: judul, content: deskripsi, image: imageUrl,
                     timestamp: serverTimestamp(), author: auth.currentUser.displayName
                 });
-                let msg = `**${judul}**\n${deskripsi}\n` + (imageUrl ? `[View Project](${imageUrl})` : "");
-                sendDiscordLog(WH_PROJECT, "🚀 PROJECT UPDATE", msg, 16766720);
+                sendDiscordLog(WH_PROJECT, "🚀 PROJECT UPDATE", `**${judul}**\n${deskripsi}`, 16766720);
                 alert("Published!");
-                window.location.href = "/announcement"; // Clean URL
+                window.location.href = "/announcement"; 
             } catch (e) { alert(e.message); } finally { btnPost.innerText = "Kirim Sekarang"; }
         });
     }
 }
 
 // ==========================================
-// 8. NAVIGASI CLEAN URL & ADMIN GATE (FIXED)
+// 8. NAVIGASI CLEAN URL & MOBILE FIX
 // ==========================================
 onAuthStateChanged(auth, async (user) => {
     const nav = document.getElementById('dynamic-nav');
@@ -140,34 +139,45 @@ onAuthStateChanged(auth, async (user) => {
         const snap = await getDoc(doc(db, "users", user.uid));
         if (snap.exists()) {
             const data = snap.data();
-            if (data.status === "BANNED") { await signOut(auth); location.href = "/auth/portal"; return; }
-            
-            if (window.location.pathname.includes("margaarea") && !["MARGA", "ADMIN", "FOUNDER"].includes(data.role)) {
+            const role = data.role;
+            const path = window.location.pathname;
+
+            // PROTEKSI HALAMAN (Kick Member Nakal)
+            if (path.includes("/sector/n1o4c") && !["MARGA", "ADMIN", "FOUNDER"].includes(role)) {
                 alert("KHUSUS MARGA!"); window.location.href = "/"; return;
             }
+            if (path.includes("/core/z9p3m") && !["ADMIN", "FOUNDER"].includes(role)) {
+                alert("KHUSUS ADMIN!"); window.location.href = "/"; return;
+            }
+
+            if (data.status === "BANNED") { await signOut(auth); location.href = "/auth/portal"; return; }
 
             if (nav) {
-                // Gunakan Clean URL (Tanpa .html)
-                let links = `<a href="/">Home</a><a href="/media">Media</a><a href="/general/hub">Chat</a><a href="/announcement">News</a>`;
+                // Link Clean (Sesuai vercel.json)
+                let links = `
+                    <a href="/">Home</a>
+                    <a href="/media">Media</a>
+                    <a href="/general/hub">Chat</a>
+                    <a href="/announcement">News</a>
+                `;
                 
-                // Gerbang Marga
-                if (["MARGA", "ADMIN", "FOUNDER"].includes(data.role)) {
-                    links += `<a href="/margaarea" style="color:#a855f7">Marga</a>`;
+                if (["MARGA", "ADMIN", "FOUNDER"].includes(role)) {
+                    links += `<a href="/sector/n1o4c" style="color:#a855f7">Marga</a>`;
                 }
-                
-                // GERBANG ADMIN AREA (Muncul kalo Admin atau Founder)
-                if (["ADMIN", "FOUNDER"].includes(data.role)) {
+                if (["ADMIN", "FOUNDER"].includes(role)) {
                     links += `<a href="/core/z9p3m" style="color:#3b82f6">Admin</a>`;
                 }
-
-                // Gerbang Owner
-                if (data.role === "FOUNDER") {
+                if (role === "FOUNDER") {
                     links += `<a href="/vault/a7b2x" style="color:#ef4444">Owner</a>`;
                 }
 
-                links += `<a href="#" id="logout-btn">Keluar</a>`;
+                links += `<a href="#" id="logout-btn">Out</a>`;
                 nav.innerHTML = links;
-                document.getElementById('logout-btn').onclick = async () => { await signOut(auth); location.href = "/auth/portal"; };
+                
+                document.getElementById('logout-btn').onclick = async () => { 
+                    await signOut(auth); 
+                    window.location.href = "/auth/portal"; 
+                };
             }
         }
     } else if(nav) { 
@@ -176,14 +186,13 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 // ==========================================
-// 9. SECURITY SYSTEM
+// 9. SECURITY & INITIALIZATION
 // ==========================================
 const enableSecurity = () => {
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.onkeydown = function(e) {
         if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73, 67, 74].includes(e.keyCode)) || (e.ctrlKey && e.keyCode == 85)) return false;
     };
-    document.addEventListener('copy', e => e.preventDefault());
 };
 
 document.addEventListener("DOMContentLoaded", () => {
