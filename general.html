@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head><title>General Chat</title><link rel="stylesheet" href="style.css"></head>
+<head><title>General Chat</title><link rel="stylesheet" href="/style.css"></head>
 <body>
     <nav class="navbar"><div class="logo">PUBLIC <span>CHAT</span></div><div id="dynamic-nav" class="nav-links"></div></nav>
     <div class="container animate-up">
@@ -13,7 +13,7 @@
         </div>
     </div>
     <script type="module">
-        import { db, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, auth } from "./script.js";
+        import { db, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, auth } from "/script.js";
         
         // Chat Logic
         const q = query(collection(db, "global_chat"), orderBy("time", "asc"));

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head><title>Owner Command</title><link rel="stylesheet" href="style.css"></head>
+<head><title>Owner Command</title><link rel="stylesheet" href="/style.css"></head>
 <body>
     <nav class="navbar"><div class="logo" style="color:#ef4444">OWNER <span>CMD</span></div><div id="dynamic-nav" class="nav-links"></div></nav>
     
@@ -41,7 +41,7 @@
     </div>
 
     <script type="module">
-        import { db, collection, addDoc, serverTimestamp, query, where, getDocs, updateDoc } from "./script.js";
+        import { db, collection, addDoc, serverTimestamp, query, where, getDocs, updateDoc } from "/script.js";
         
         // Post Media Logic
         document.getElementById('btn-post').onclick = async () => {
