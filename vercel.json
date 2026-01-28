@@ -1,6 +1,5 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false,
   "rewrites": [
     { "source": "/media/list", "destination": "/media.html" },
     { "source": "/general/hub", "destination": "/general.html" },
