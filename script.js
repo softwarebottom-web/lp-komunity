@@ -14,7 +14,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// --- 1. NAVIGASI DINAMIS & CEK BAN ---
+// --- 1. NAVIGASI DINAMIS & CEK BAN (SINKRON DENGAN VERCEL.JSON) ---
 const navContainer = document.getElementById('dynamic-nav');
 if (navContainer) {
     onAuthStateChanged(auth, async (user) => {
@@ -26,35 +26,39 @@ if (navContainer) {
             if (snap.exists() && snap.data().status === "BANNED") {
                 alert("AKUN ANDA DIBEKUKAN OLEH OWNER.");
                 await signOut(auth);
-                window.location.href = "form.html";
+                window.location.href = "/auth/portal"; // Sesuaikan ke path vercel.json
                 return;
             }
 
             const role = snap.exists() ? snap.data().role : "MEMBER";
             
+            // Menggunakan URL Path dari vercel.json (Tanpa .html)
             let links = `
-                <a href="index.html">Home</a>
-                <a href="media.html">Media</a>
-                <a href="general.html">Chat</a>
+                <a href="/">Home</a>
+                <a href="/media/list">Media</a>
+                <a href="/general/hub">Chat</a>
             `;
             
-            if (role === "FOUNDER") links += `<a href="ownerarea.html" style="color:#ef4444">Owner</a>`;
-            if (["FOUNDER", "ADMIN"].includes(role)) links += `<a href="adminarea.html" style="color:#3b82f6">Admin</a>`;
-            if (["FOUNDER", "ADMIN", "MARGA"].includes(role)) links += `<a href="margaarea.html" style="color:#a855f7">Noctyra</a>`;
+            if (role === "FOUNDER") links += `<a href="/vault/a7b2x" style="color:#ef4444">Owner</a>`;
+            if (["FOUNDER", "ADMIN"].includes(role)) links += `<a href="/core/z9p3m" style="color:#3b82f6">Admin</a>`;
+            if (["FOUNDER", "ADMIN", "MARGA"].includes(role)) links += `<a href="/sector/n1o4c" style="color:#a855f7">Noctyra</a>`;
             
             links += `<a href="#" id="btn-logout">Keluar</a>`;
             navContainer.innerHTML = links;
             
             setTimeout(() => {
-                document.getElementById('btn-logout').onclick = () => signOut(auth).then(() => window.location.href = "form.html");
+                const logoutBtn = document.getElementById('btn-logout');
+                if(logoutBtn) {
+                    logoutBtn.onclick = () => signOut(auth).then(() => window.location.href = "/auth/portal");
+                }
             }, 500);
         } else {
-            navContainer.innerHTML = `<a href="index.html">Home</a><a href="form.html">Login</a>`;
+            navContainer.innerHTML = `<a href="/">Home</a><a href="/auth/portal">Login</a>`;
         }
     });
 }
 
-// --- 2. MEDIA LOGS RENDERER (Khusus media.html) ---
+// --- 2. MEDIA LOGS RENDERER (Khusus media.html / /media/list) ---
 const logsContainer = document.getElementById('media-gallery');
 if (logsContainer) {
     const q = query(collection(db, "media_logs"), orderBy("time", "desc"));
@@ -72,5 +76,17 @@ if (logsContainer) {
     });
 }
 
-// --- 3. EXPORT UNTUK DIGUNAKAN DI HTML ---
+// --- 3. SECURITY SYSTEM (ANTI-COPY & ANTI-F12) ---
+document.addEventListener('contextmenu', event => event.preventDefault()); 
+document.addEventListener('selectstart', event => event.preventDefault());
+
+document.onkeydown = function(e) {
+    if (e.keyCode == 123 || 
+        (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'C'.charCodeAt(0) || e.keyCode == 'J'.charCodeAt(0))) ||
+        (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0))) {
+        return false;
+    }
+}
+
+// --- 4. EXPORT UNTUK DIGUNAKAN DI HTML ---
 export { auth, db, doc, getDoc, setDoc, updateDoc, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot };
