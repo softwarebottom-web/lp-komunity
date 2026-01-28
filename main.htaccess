@@ -1,3 +1,0 @@
-RewriteEngine On
-RewriteCond %{THE_REQUEST} /index\.html [NC]
-RewriteRule ^index\.html$ / [R=301,L]
