@@ -1,32 +1,41 @@
 <!DOCTYPE html>
 <html lang="id">
-<head><link rel="stylesheet" href="style.css"><title>OWNER PANEL</title></head>
+<head>
+    <meta charset="UTF-8">
+    <title>ZANE ADMIN PANEL</title>
+    <link rel="stylesheet" href="style.css">
+</head>
 <body>
     <nav id="dynamic-nav"></nav>
     <div class="container">
-        <h1>OWNER PANEL</h1>
-        <div class="admin-grid">
-            <div class="glass-card">
-                <h3>📢 POST SOCIAL MEDIA</h3>
-                <input type="text" id="soc-title" placeholder="Caption Singkat...">
-                <input type="file" id="soc-file">
-                <button class="btn btn-purple" onclick="postContent('SOCIAL')">POST TO MEDIA</button>
-            </div>
-            <div class="glass-card">
-                <h3>🚀 UPDATE PROJECT</h3>
-                <input type="text" id="sys-title" placeholder="Project Name/Version...">
-                <textarea id="sys-desc" placeholder="Changelogs detail..."></textarea>
-                <input type="file" id="sys-file">
-                <button class="btn btn-blue" onclick="postContent('SYSTEM')">UPDATE SYSTEM</button>
-            </div>
-        </div>
+        <h1>CONTENT MANAGER</h1>
         <div class="glass-card">
-            <h3>👥 MANAGE MEMBER</h3>
-            <input type="text" id="target-uid" placeholder="User UID...">
-            <select id="target-role">
-                <option value="MARGA">MARGA</option><option value="ADMIN">ADMIN</option><option value="BANNED">BAN</option>
+            <h3>PUBLISH NEW CONTENT</h3>
+            
+            <label>Title</label>
+            <input type="text" id="inp-title" placeholder="Judul Konten...">
+            
+            <label>Link URL (Gambar/Video/Postingan)</label>
+            <input type="text" id="inp-url" placeholder="https://youtube.com/...">
+            
+            <label>Platform / Kategori</label>
+            <select id="inp-platform">
+                <option value="YOUTUBE">YOUTUBE</option>
+                <option value="TIKTOK">TIKTOK</option>
+                <option value="INSTAGRAM">INSTAGRAM</option>
+                <option value="OTHER">LAINNYA</option>
             </select>
-            <button class="btn btn-purple" onclick="updateUserRole()">APPLY ROLE</button>
+
+            <label>Tipe Post</label>
+            <select id="inp-type">
+                <option value="SOCIAL">MEDIA FEED (Umum)</option>
+                <option value="SYSTEM">DEV UPDATE (Changelogs)</option>
+            </select>
+
+            <label>Deskripsi</label>
+            <textarea id="inp-desc" rows="3" placeholder="Keterangan singkat..."></textarea>
+            
+            <button id="btn-post" class="btn-purple" onclick="postContent()">PUBLISH</button>
         </div>
     </div>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
