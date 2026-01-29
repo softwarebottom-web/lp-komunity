@@ -2,69 +2,45 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>L.P ZONE - OWNER AREA</title>
-    <link rel="stylesheet" href="/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOUNDER VAULT | L.P ZONE</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container animate" style="padding-bottom: 100px;">
-        <header style="text-align: center; margin-bottom: 30px;">
-            <h1 style="color: var(--danger); text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);">FOUNDER PANEL</h1>
-            <p style="color: #64748b; font-size: 11px;">AUTHORIZED PERSONNEL ONLY</p>
-        </header>
+    <nav id="dynamic-nav"></nav>
 
-        <div class="glass-card">
-            <h3><i class="fas fa-upload"></i> Publish Content</h3>
-            <div style="margin-top: 15px;">
-                <input type="text" id="inp-judul" placeholder="Judul Project / Info">
-                <textarea id="inp-desc" placeholder="Deskripsi lengkap..." style="height: 100px;"></textarea>
-                
-                <label class="file-label">
-                    <i class="fas fa-image"></i> Pilih Foto Project (Optional)
-                    <input type="file" id="inp-file-project" accept="image/*">
-                </label>
-                
-                <button id="btn-post-project" class="btn-primary">PUBLISH TO FEED</button>
-            </div>
+    <div class="container">
+        <h1 class="glitch">FOUNDER CONTROL</h1>
+        
+        <div class="panel-box">
+            <h3>🚀 BROADCAST SYSTEM</h3>
+            <select id="post-type">
+                <option value="ANNOUNCEMENT">SOCIAL MEDIA / ANNOUNCEMENT</option>
+                <option value="CHANGELOGS">SYSTEM CHANGELOGS</option>
+            </select>
+            <input type="text" id="inp-judul" placeholder="Post Title / Project Name...">
+            <textarea id="inp-desc" rows="4" placeholder="Caption or Update Details..."></textarea>
+            <input type="file" id="inp-file-project" accept="image/*">
+            <button id="btn-publish" class="btn btn-purple" onclick="postProject()">EXECUTE POST</button>
         </div>
 
-        <div class="glass-card">
-            <h3><i class="fas fa-link"></i> Manage External Links</h3>
-            <div style="margin-top: 15px;">
-                <select id="sosmed-cat">
-                    <option value="TikTok">TikTok</option>
-                    <option value="Instagram">Instagram</option>
-                    <option value="YouTube">YouTube</option>
-                    <option value="Store">LP Store</option>
-                    <option value="Lab">Lab Project</option>
-                </select>
-                <input type="text" id="sosmed-title" placeholder="Judul Link (Contoh: New Script Pawn)">
-                <input type="text" id="sosmed-url" placeholder="https://...">
-                <button id="btn-save-sosmed" class="btn-primary" style="background: var(--secondary); color: white;">UPDATE LINK</button>
-            </div>
-        </div>
-
-        <div class="glass-card">
-            <h3><i class="fas fa-gavel"></i> Member Management</h3>
-            <div style="overflow-x: auto; margin-top: 15px;">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Role</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="member-list-body">
-                        </tbody>
-                </table>
-            </div>
+        <div class="panel-box" style="margin-top: 30px;">
+            <h3>👥 AUTHORITY CONTROL</h3>
+            <input type="text" id="target-uid" placeholder="Target User UID...">
+            <select id="target-role">
+                <option value="MEMBER">MEMBER (Commoner)</option>
+                <option value="MARGA">MARGA (Noctyra)</option>
+                <option value="ADMIN">ADMIN (Moderator)</option>
+                <option value="BANNED">BAN USER (Blacklist)</option>
+            </select>
+            <button class="btn btn-outline" onclick="updateUserRole()" style="width:100%; margin-top:10px;">APPLY CHANGES</button>
         </div>
     </div>
 
-    <nav id="dynamic-nav"></nav>
-    <script src="/script.js" type="module"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
