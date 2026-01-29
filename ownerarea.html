@@ -1,59 +1,44 @@
 <!DOCTYPE html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZANE ADMIN PANEL</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
-</head>
+<head><meta charset="UTF-8"><title>GODFATHER PANEL</title><link rel="stylesheet" href="style.css"></head>
 <body>
     <nav id="dynamic-nav"></nav>
-
     <div class="container">
-        <h1 class="glitch">ADMIN CONTROL</h1>
-
+        <h1 style="color:#ff4d4d;">GODFATHER CONTROL</h1>
+        
         <div class="glass-card">
             <h3>📝 PUBLISH CONTENT</h3>
-            
-            <div class="input-group">
-                <label>Judul Konten</label>
-                <input type="text" id="inp-title" placeholder="Judul Video / Postingan...">
-            </div>
+            <input type="text" id="inp-title" placeholder="Judul...">
+            <input type="text" id="inp-url" placeholder="Link URL...">
+            <select id="inp-platform">
+                <option value="YOUTUBE">YOUTUBE</option>
+                <option value="TIKTOK">TIKTOK</option>
+                <option value="INSTAGRAM">INSTAGRAM</option>
+            </select>
+            <select id="inp-type"><option value="SOCIAL">MEDIA</option><option value="SYSTEM">NEWS/SYSTEM</option></select>
+            <textarea id="inp-desc" placeholder="Deskripsi..."></textarea>
+            <button onclick="postContent()" class="btn-primary">PUBLISH</button>
+        </div>
 
-            <div class="input-group">
-                <label>Link URL (YouTube/TikTok/Gambar)</label>
-                <input type="text" id="inp-url" placeholder="https://...">
-            </div>
-
-            <div class="admin-grid">
-                <div class="input-group">
-                    <label>Platform</label>
-                    <select id="inp-platform">
-                        <option value="YOUTUBE">YOUTUBE</option>
-                        <option value="TIKTOK">TIKTOK</option>
-                        <option value="INSTAGRAM">INSTAGRAM</option>
-                        <option value="WEB">WEBSITE</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>Tipe Post</label>
-                    <select id="inp-type">
-                        <option value="SOCIAL">MEDIA GALLERY</option>
-                        <option value="SYSTEM">SYSTEM UPDATE</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label>Deskripsi Tambahan</label>
-                <textarea id="inp-desc" rows="3" placeholder="Keterangan singkat..."></textarea>
-            </div>
-
-            <button id="btn-post" class="btn-primary" onclick="postContent()">PUBLISH NOW</button>
+        <div class="glass-card">
+            <h3>👥 MANAGE FAMILY & BAN</h3>
+            <input type="text" id="target-uid" placeholder="UID Member...">
+            <select id="target-rank" style="background:#111; color:white; padding:10px; width:100%; border:1px solid #333;">
+                <optgroup label="HUKUMAN">
+                    <option value="BANNED">🚫 BAN USER</option>
+                    <option value="MEMBER">✅ UNBAN / KICK TO MEMBER</option>
+                </optgroup>
+                <optgroup label="MARGA PROMOTION">
+                    <option value="HOMIES">🩸 PROMOTE TO HOMIES</option>
+                    <option value="Capo">🔫 PROMOTE TO CAPO</option>
+                    <option value="El Capo">💊 PROMOTE TO EL CAPO</option>
+                    <option value="Resident">🏠 PROMOTE TO RESIDENT</option>
+                    <option value="Under Boss">👑 PROMOTE TO UNDERBOSS</option>
+                </optgroup>
+            </select>
+            <button onclick="updateRank()" class="btn-primary" style="background:#ff4d4d; margin-top:10px;">EXECUTE</button>
         </div>
     </div>
-
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
