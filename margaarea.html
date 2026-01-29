@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8"><title>NOCTYRA HQ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav id="dynamic-nav"></nav>
+    <div class="container">
+        <h1 style="color: #a855f7;">NOCTYRA HQ</h1>
+        <div class="glass-card">
+            <h3>💬 GANGSTER TALK</h3>
+            <div id="chat-box" style="height: 300px; overflow-y: auto; background: #000; padding: 10px; margin-bottom: 10px; border: 1px solid #333;">
+                </div>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="chat-msg" placeholder="Ketik pesan, fam...">
+                <button class="btn btn-purple" onclick="sendMessage()" style="width: 80px;">🚀</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>ADMIN CORE | L.P ZONE</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav id="dynamic-nav"></nav>
+
+    <div class="container">
+        <h1>ADMIN CORE</h1>
+        <div class="panel-box">
+            <h3>MODERATION SYSTEM</h3>
+            <p>Target UID:</p>
+            <input type="text" id="admin-target-uid" placeholder="UID Member...">
+            <button class="btn btn-purple" onclick="promoteToMarga()">PROMOTE TO MARGA</button>
+            <button class="btn btn-outline" style="border-color:red" onclick="banUser()">KICK/BAN MEMBER</button>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

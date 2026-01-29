@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="id">
+<head><link rel="stylesheet" href="style.css"><title>OWNER PANEL</title></head>
+<body>
+    <nav id="dynamic-nav"></nav>
+    <div class="container">
+        <h1>OWNER PANEL</h1>
+        <div class="admin-grid">
+            <div class="glass-card">
+                <h3>📢 POST SOCIAL MEDIA</h3>
+                <input type="text" id="soc-title" placeholder="Caption Singkat...">
+                <input type="file" id="soc-file">
+                <button class="btn btn-purple" onclick="postContent('SOCIAL')">POST TO MEDIA</button>
+            </div>
+            <div class="glass-card">
+                <h3>🚀 UPDATE PROJECT</h3>
+                <input type="text" id="sys-title" placeholder="Project Name/Version...">
+                <textarea id="sys-desc" placeholder="Changelogs detail..."></textarea>
+                <input type="file" id="sys-file">
+                <button class="btn btn-blue" onclick="postContent('SYSTEM')">UPDATE SYSTEM</button>
+            </div>
+        </div>
+        <div class="glass-card">
+            <h3>👥 MANAGE MEMBER</h3>
+            <input type="text" id="target-uid" placeholder="User UID...">
+            <select id="target-role">
+                <option value="MARGA">MARGA</option><option value="ADMIN">ADMIN</option><option value="BANNED">BAN</option>
+            </select>
+            <button class="btn btn-purple" onclick="updateUserRole()">APPLY ROLE</button>
+        </div>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
