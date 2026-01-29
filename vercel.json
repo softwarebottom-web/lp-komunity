@@ -1,12 +1,13 @@
 {
+  "version": 2,
+  "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/media", "destination": "/media.html" },
-    { "source": "/general/hub", "destination": "/general.html" },
-    { "source": "/auth/portal", "destination": "/form.html" },
+    { "source": "/auth/portal", "destination": "/portal.html" },
     { "source": "/vault/a7b2x", "destination": "/ownerarea.html" },
-    { "source": "/core/z9p3m", "destination": "/adminarea.html" },
     { "source": "/sector/n1o4c", "destination": "/margaarea.html" },
-    { "source": "/announcement", "destination": "/announcement.html" }
+    { "source": "/media", "destination": "/media.html" },
+    { "source": "/announcement", "destination": "/announcement.html" },
+    { "source": "/general", "destination": "/general.html" }
   ]
 }
