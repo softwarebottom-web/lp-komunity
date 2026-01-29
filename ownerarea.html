@@ -2,42 +2,58 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZANE ADMIN PANEL</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <nav id="dynamic-nav"></nav>
+
     <div class="container">
-        <h1>CONTENT MANAGER</h1>
+        <h1 class="glitch">ADMIN CONTROL</h1>
+
         <div class="glass-card">
-            <h3>PUBLISH NEW CONTENT</h3>
+            <h3>📝 PUBLISH CONTENT</h3>
             
-            <label>Title</label>
-            <input type="text" id="inp-title" placeholder="Judul Konten...">
-            
-            <label>Link URL (Gambar/Video/Postingan)</label>
-            <input type="text" id="inp-url" placeholder="https://youtube.com/...">
-            
-            <label>Platform / Kategori</label>
-            <select id="inp-platform">
-                <option value="YOUTUBE">YOUTUBE</option>
-                <option value="TIKTOK">TIKTOK</option>
-                <option value="INSTAGRAM">INSTAGRAM</option>
-                <option value="OTHER">LAINNYA</option>
-            </select>
+            <div class="input-group">
+                <label>Judul Konten</label>
+                <input type="text" id="inp-title" placeholder="Judul Video / Postingan...">
+            </div>
 
-            <label>Tipe Post</label>
-            <select id="inp-type">
-                <option value="SOCIAL">MEDIA FEED (Umum)</option>
-                <option value="SYSTEM">DEV UPDATE (Changelogs)</option>
-            </select>
+            <div class="input-group">
+                <label>Link URL (YouTube/TikTok/Gambar)</label>
+                <input type="text" id="inp-url" placeholder="https://...">
+            </div>
 
-            <label>Deskripsi</label>
-            <textarea id="inp-desc" rows="3" placeholder="Keterangan singkat..."></textarea>
-            
-            <button id="btn-post" class="btn-purple" onclick="postContent()">PUBLISH</button>
+            <div class="admin-grid">
+                <div class="input-group">
+                    <label>Platform</label>
+                    <select id="inp-platform">
+                        <option value="YOUTUBE">YOUTUBE</option>
+                        <option value="TIKTOK">TIKTOK</option>
+                        <option value="INSTAGRAM">INSTAGRAM</option>
+                        <option value="WEB">WEBSITE</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Tipe Post</label>
+                    <select id="inp-type">
+                        <option value="SOCIAL">MEDIA GALLERY</option>
+                        <option value="SYSTEM">SYSTEM UPDATE</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Deskripsi Tambahan</label>
+                <textarea id="inp-desc" rows="3" placeholder="Keterangan singkat..."></textarea>
+            </div>
+
+            <button id="btn-post" class="btn-primary" onclick="postContent()">PUBLISH NOW</button>
         </div>
     </div>
+
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
