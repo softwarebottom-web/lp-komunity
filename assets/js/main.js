@@ -1,4 +1,14 @@
-import { auth, db, discordProvider, signInWithRedirect, getRedirectResult, signOut, doc, setDoc, getDoc } from './firebase-config.js';
+import { 
+    auth, 
+    db, 
+    discordProvider, 
+    signInWithRedirect, 
+    getRedirectResult, 
+    signOut, 
+    doc, 
+    setDoc, 
+    getDoc 
+} from './firebase-config.js';
 
 // --- CONFIG WEBHOOKS ---
 const WEBHOOKS = {
@@ -8,10 +18,11 @@ const WEBHOOKS = {
     ban: "https://discord.com/api/webhooks/1466148412524069077/xa7iEdKbgiIfvXcNNINE-1MTh5ZAmJ1Am-G8S6BsySOqV4gkWoB24HGDlzeC-8rSIIF9"
 };
 
-// --- HELPER LOG ---
+// --- HELPER LOG KE DISCORD ---
 window.sendDiscordLog = (type, title, description, color = 3447003) => {
     const url = WEBHOOKS[type];
     if (!url) return;
+    
     fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -19,7 +30,9 @@ window.sendDiscordLog = (type, title, description, color = 3447003) => {
             username: "LP Zone System",
             avatar_url: "https://i.imgur.com/AfFp7pu.png",
             embeds: [{
-                title: title, description: description, color: color,
+                title: title, 
+                description: description, 
+                color: color,
                 footer: { text: "LP Zone • By Zane Developer" },
                 timestamp: new Date().toISOString()
             }]
@@ -31,58 +44,63 @@ window.sendDiscordLog = (type, title, description, color = 3447003) => {
 // 1. FUNGSI LOGIN (Redirect Mode)
 // ==========================================
 window.loginWithDiscord = async () => {
-    // Alert ini muncul di HP untuk konfirmasi tombol berfungsi
+    // Alert untuk konfirmasi di HP bahwa tombol ditekan
     alert("Menghubungkan ke Discord... Mohon tunggu.");
     
     try {
+        // Menggunakan OIDC Provider yang sudah diset di config
         await signInWithRedirect(auth, discordProvider);
     } catch (error) {
         alert("Gagal Memulai Login: " + error.message);
-        console.error(error);
+        console.error("Login Error:", error);
     }
 };
 
 // ==========================================
-// 2. CEK HASIL LOGIN (Setelah Redirect)
+// 2. CEK HASIL LOGIN (Otomatis jalan setelah Redirect)
 // ==========================================
 async function checkLoginRedirect() {
     try {
+        // Cek apakah user baru saja kembali dari halaman Discord
         const result = await getRedirectResult(auth);
+        
         if (result) {
             const user = result.user;
             
-            // Cek/Simpan User ke Firestore
+            // Cek data user di Firestore
             const userRef = doc(db, "users", user.uid);
             const userSnap = await getDoc(userRef);
 
             if (!userSnap.exists()) {
-                // User Baru
+                // --- USER BARU ---
                 await setDoc(userRef, {
-                    username: user.displayName,
+                    username: user.displayName || "User",
                     email: user.email,
-                    role: "Member",
+                    role: "Member", // Default Role
                     joinedAt: new Date(),
                     photoURL: user.photoURL
                 });
-                window.sendDiscordLog('login', 'New User', `Welcome **${user.displayName}** to LP Zone!`, 65280);
+                // Log ke Discord (Warna Hijau)
+                window.sendDiscordLog('login', 'New User Joined', `Welcome **${user.displayName}** to LP Zone!`, 65280);
             } else {
-                // User Lama
+                // --- USER LAMA ---
+                // Log ke Discord (Warna Biru)
                 window.sendDiscordLog('login', 'User Login', `**${user.displayName}** has logged in.`, 3447003);
             }
 
-            alert("Login Berhasil! Mengalihkan...");
+            // Redirect ke Dashboard
             window.location.href = "dashboard.html";
         }
     } catch (error) {
-        console.error("Redirect Error:", error);
-        // Jangan alert error disini jika null (artinya user baru buka halaman biasa)
-        if (error.code !== 'auth/popup-closed-by-user') {
-           // alert("Error Auth: " + error.message);
+        console.error("Redirect Check Error:", error);
+        // Abaikan error 'popup-closed' atau null result (artinya user buka web biasa)
+        if (error.code && error.code !== 'auth/popup-closed-by-user') {
+           // alert("Debug Auth: " + error.message);
         }
     }
 }
 
-// Jalankan cek redirect setiap halaman dimuat
+// Jalankan fungsi pengecekan setiap halaman dimuat
 checkLoginRedirect();
 
 // ==========================================
@@ -90,9 +108,32 @@ checkLoginRedirect();
 // ==========================================
 window.logoutUser = () => {
     const user = auth.currentUser;
-    if(user) window.sendDiscordLog('login', 'Logout', `**${user.displayName}** logged out.`, 15158332);
+    if(user) {
+        window.sendDiscordLog('login', 'Logout', `**${user.displayName}** logged out.`, 15158332);
+    }
     
     signOut(auth).then(() => {
-        window.location.href = "login.html"; // Balik ke login.html, bukan index
+        window.location.href = "login.html";
+    }).catch((error) => {
+        console.error("Logout Error:", error);
     });
+};
+
+// ==========================================
+// 4. TAB SWITCHING (Untuk Dashboard)
+// ==========================================
+window.switchTab = (tabId) => {
+    // Sembunyikan semua section
+    document.querySelectorAll('.dashboard-section').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('bg-cyan-500/10', 'text-cyan-400'));
+    
+    // Tampilkan yang dipilih
+    const target = document.getElementById(tabId);
+    if (target) {
+        target.classList.remove('hidden');
+        
+        // Highlight tombol sidebar (Cari tombol yang punya onclick ke tabId ini)
+        const activeBtns = document.querySelectorAll(`button[onclick="switchTab('${tabId}')"]`);
+        activeBtns.forEach(btn => btn.classList.add('bg-cyan-500/10', 'text-cyan-400'));
+    }
 };
