@@ -54,12 +54,25 @@
         </div>
     </div>
 
+        <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <script src="script.js"></script>
+
     <script>
+        // Logika animasi panel (Tetep di sini aja biar aman)
         const sIn = document.getElementById('signin-panel');
         const sUp = document.getElementById('signup-panel');
-        document.getElementById('to-signup').onclick = () => { sIn.className='auth-panel glass-card inactive-left'; sUp.className='auth-panel glass-card active'; };
-        document.getElementById('to-signin').onclick = () => { sUp.className='auth-panel glass-card inactive-right'; sIn.className='auth-panel glass-card active'; };
+        document.getElementById('to-signup').onclick = () => { 
+            sIn.className='auth-panel glass-card inactive-left'; 
+            sUp.className='auth-panel glass-card active'; 
+        };
+        document.getElementById('to-signin').onclick = () => { 
+            sUp.className='auth-panel glass-card inactive-right'; 
+            sIn.className='auth-panel glass-card active'; 
+        };
     </script>
-    <script src="script.js" type="module"></script>
+
 </body>
 </html>
