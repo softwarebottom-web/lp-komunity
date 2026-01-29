@@ -3,37 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZANE DEVELOPER</title>
+    <title>ZANE DEVELOPER | HOME</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <nav id="dynamic-nav"></nav>
 
-    <div class="container" style="text-align:center; margin-top:50px;">
-        <h1 style="font-size: 3em; margin-bottom: 10px; text-shadow: 0 0 20px var(--primary);">ZANE <span style="color:#a855f7">NOCYTRA</span></h1>
-        <p style="color:#888; margin-bottom: 40px;">
-            Founder & Developer. Membangun ekosistem digital dan komunitas roleplay yang solid.
+    <header class="hero-section">
+        <h1 class="glitch-text">ZANE NOCYTRA</h1>
+        <p class="subtitle">
+            Membangun Ekosistem Digital & Komunitas Roleplay Terbesar.
+            <br>Inovasi Tanpa Batas, Kualitas Tanpa Kompromi.
         </p>
+        
+        <div style="margin-top: 30px;">
+            <a href="media.html" class="btn-login-nav" style="background:transparent; border:1px solid var(--primary); margin-right:10px;">EXPLORE MEDIA</a>
+            <a href="portal.html" class="btn-login-nav">JOIN COMMUNITY</a>
+        </div>
+    </header>
 
-        <div class="grid-2">
-            <a href="https://link-lab-lu.com" target="_blank" style="text-decoration:none;">
-                <div class="glass-card" style="border-color:#3b82f6; transition:0.3s;">
-                    <h2 style="color:#3b82f6;">🧪 LAB</h2>
-                    <p style="color:#ccc">Experimental Scripts & Projects</p>
-                </div>
-            </a>
-            
-            <a href="https://link-store-lu.com" target="_blank" style="text-decoration:none;">
-                <div class="glass-card" style="border-color:#a855f7; transition:0.3s;">
-                    <h2 style="color:#a855f7;">🛒 STORE</h2>
-                    <p style="color:#ccc">Premium Assets & Services</p>
-                </div>
-            </a>
+    <div class="stats-bar">
+        <div class="stat-item">
+            <h3>500+</h3>
+            <p>Community Members</p>
+        </div>
+        <div class="stat-item">
+            <h3>100%</h3>
+            <p>Uptime Server</p>
+        </div>
+        <div class="stat-item">
+            <h3>50+</h3>
+            <p>Project Archives</p>
         </div>
     </div>
 
+    <div class="main-grid">
+        <a href="https://link-lab-lu.com" target="_blank" class="feature-card">
+            <h2 style="color: #3b82f6;">🧪 LABORATORY</h2>
+            <p>Akses eksperimen skrip, beta testing, dan inovasi kode terbaru yang sedang dikembangkan.</p>
+            <div style="margin-top:20px; font-size:12px; color:#3b82f6;">KLIK UNTUK MEMBUKA &rarr;</div>
+        </a>
+
+        <a href="https://link-store-lu.com" target="_blank" class="feature-card">
+            <h2 style="color: #a855f7;">🛒 OFFICIAL STORE</h2>
+            <p>Dapatkan aset premium, gamemode eksklusif, dan layanan jasa development terpercaya.</p>
+            <div style="margin-top:20px; font-size:12px; color:#a855f7;">KLIK UNTUK MEMBUKA &rarr;</div>
+        </a>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 ZANE DEVELOPER. POWERED BY NOCYTRA FAMILY.</p>
+        <p style="color:#666; margin-top:5px;">System v2.0 • Secured by Firebase</p>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
