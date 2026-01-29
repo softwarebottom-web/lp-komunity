@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LP Zone | Zane Developer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+</head>
+<body>
+    <div class="bg-mesh"></div>
+
+    <nav class="fixed w-full z-50 glass border-b border-gray-800">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-black tracking-tighter gradient-text">LP ZONE</h1>
+            <div class="hidden md:flex space-x-8 text-sm font-medium items-center">
+                <a href="#about" class="hover:text-cyan-400 transition">About</a>
+                <a href="media.html" class="hover:text-cyan-400 transition">Media</a>
+                <a href="login.html" class="px-6 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-full hover:shadow-lg hover:shadow-cyan-500/30 transition transform hover:scale-105 font-bold">
+                    Login Member
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="h-screen flex items-center justify-center text-center px-4 relative overflow-hidden">
+        <div class="absolute top-20 left-10 w-40 h-40 bg-purple-500/20 rounded-full blur-[80px]"></div>
+        <div class="absolute bottom-20 right-10 w-64 h-64 bg-cyan-500/10 rounded-full blur-[80px]"></div>
+
+        <div class="z-10 max-w-5xl" data-aos="fade-up">
+            <div class="mb-4 inline-block px-4 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 text-xs font-bold tracking-widest uppercase">
+                Official Community
+            </div>
+            <h1 class="text-5xl md:text-8xl font-black mb-6 leading-tight">
+                ZANE <span class="gradient-text">ECOSYSTEM</span>
+            </h1>
+            <p class="text-gray-400 mb-10 text-lg md:text-xl max-w-2xl mx-auto">
+                Wadah komunitas Developer, Branding, dan Roleplay Insight di bawah naungan Zane Nocytra.
+            </p>
+            
+            <div class="flex flex-col md:flex-row justify-center gap-5">
+                <a href="#" class="gradient-border p-[1px] group hover:scale-105 transition duration-300">
+                    <div class="gradient-border-content px-8 py-4 flex items-center gap-3">
+                        <span>🛒</span> Store Official
+                    </div>
+                </a>
+                <a href="#" class="glass px-8 py-4 rounded-xl hover:bg-white/5 transition flex items-center justify-center gap-2 border border-gray-700">
+                    <span>🧪</span> Lab Official
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script> AOS.init(); </script>
+</body>
+</html>
