@@ -1,166 +1,41 @@
-/* --- 1. RESET & VARIABLES --- */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/* --- RESET & FONT --- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #050505; color: #fff; font-family: 'Rajdhani', sans-serif; line-height: 1.6; overflow-x: hidden; }
 
-:root {
-    --bg-dark: #050505;
-    --bg-card: #111111;
-    --neon-purple: #a855f7;
-    --neon-blue: #3b82f6;
-    --neon-red: #ef4444;
-    --text-main: #e2e8f0;
-    --text-dim: #94a3b8;
-    --font-cyber: 'Orbitron', sans-serif;
-    --font-main: 'Rajdhani', sans-serif;
-}
-
-body {
-    background-color: var(--bg-dark);
-    color: var(--text-main);
-    font-family: var(--font-main);
-    overflow-x: hidden;
-    line-height: 1.6;
-}
-
-/* --- 2. NAVIGATION BAR (SINKRON) --- */
+/* --- NAVIGATION BAR --- */
 #dynamic-nav {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    padding: 15px 5%;
-    display: flex;
-    justify-content: center;
-    gap: 25px;
-    background: rgba(0, 0, 0, 0.9);
-    backdrop-filter: blur(10px);
-    z-index: 9999;
-    border-bottom: 1px solid rgba(168, 85, 247, 0.2);
+    position: fixed; top: 0; width: 100%; padding: 15px 5%;
+    display: flex; justify-content: center; gap: 20px;
+    background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);
+    z-index: 9999; border-bottom: 1px solid #222;
 }
-
 #dynamic-nav a {
-    color: var(--text-main);
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 0.85rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    transition: 0.3s ease;
+    color: #fff; text-decoration: none; font-weight: bold;
+    font-size: 13px; letter-spacing: 1px; text-transform: uppercase;
+    transition: 0.3s;
 }
+#dynamic-nav a:hover { color: #a855f7; text-shadow: 0 0 10px #a855f7; }
 
-#dynamic-nav a:hover {
-    color: var(--neon-purple);
-    text-shadow: 0 0 10px var(--neon-purple);
-}
-
-/* --- 3. HERO & CONTAINER --- */
+/* --- HERO SECTION --- */
 .hero {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 0 20px;
+    height: 100vh; display: flex; align-items: center; justify-content: center;
+    text-align: center; background: radial-gradient(circle, #111 0%, #000 100%);
 }
+.glitch { font-family: 'Orbitron', sans-serif; font-size: 4rem; letter-spacing: 10px; text-shadow: 0 0 20px #a855f7; }
 
-.container {
-    max-width: 1200px;
-    margin: 80px auto; /* Margin top biar gak ketutup Navbar */
-    padding: 20px;
+/* --- CONTAINER & PANEL --- */
+.container { max-width: 900px; margin: 100px auto 50px; padding: 20px; }
+.panel-box { background: #111; padding: 30px; border-radius: 8px; border: 1px solid #222; margin-top: 20px; }
+
+/* --- INPUT & BUTTONS --- */
+input, textarea, select {
+    width: 100%; padding: 12px; margin: 10px 0;
+    background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 4px; font-family: inherit;
 }
-
-/* --- 4. TYPOGRAPHY --- */
-h1, h2, h3 {
-    font-family: var(--font-cyber);
-    text-transform: uppercase;
-    letter-spacing: 5px;
-}
-
-.glitch {
-    font-size: clamp(2.5rem, 8vw, 5rem);
-    text-shadow: 0 0 20px var(--neon-purple);
-    margin-bottom: 10px;
-}
-
-.subtitle {
-    color: var(--text-dim);
-    letter-spacing: 3px;
-    margin-bottom: 30px;
-}
-
-/* --- 5. BUTTONS (SINKRON SEMUA HALAMAN) --- */
 .btn {
-    padding: 12px 30px;
-    font-family: var(--font-cyber);
-    font-size: 0.75rem;
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: 0.4s;
-    text-decoration: none;
-    display: inline-block;
-    border: none;
-    text-align: center;
+    padding: 15px 30px; border-radius: 4px; cursor: pointer; font-weight: bold;
+    font-family: 'Orbitron', sans-serif; transition: 0.3s; border: none; text-decoration: none; display: inline-block;
 }
-
-.btn-outline {
-    border: 1px solid var(--neon-blue);
-    background: transparent;
-    color: white;
-}
-
-.btn-outline:hover {
-    background: var(--neon-blue);
-    box-shadow: 0 0 20px var(--neon-blue);
-}
-
-.btn-purple {
-    background: var(--neon-purple);
-    color: white;
-    box-shadow: 0 0 15px var(--neon-purple);
-}
-
-.btn-purple:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 0 30px var(--neon-purple);
-}
-
-/* --- 6. FORMS (BUAT OWNER AREA / UPLOAD) --- */
-.form-group {
-    background: var(--bg-card);
-    padding: 30px;
-    border-radius: 8px;
-    border: 1px solid #222;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-input, textarea {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 20px;
-    background: #1a1a1a;
-    border: 1px solid #333;
-    color: white;
-    font-family: var(--font-main);
-    border-radius: 4px;
-}
-
-input:focus, textarea:focus {
-    outline: none;
-    border-color: var(--neon-purple);
-    box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
-}
-
-/* --- 7. UTILITIES --- */
-.text-red { color: var(--neon-red); }
-.text-purple { color: var(--neon-purple); }
-.mt-20 { margin-top: 20px; }
-
-/* Responsive */
-@media (max-width: 768px) {
-    #dynamic-nav { gap: 15px; padding: 15px 2%; }
-    #dynamic-nav a { font-size: 0.7rem; letter-spacing: 1px; }
-}
+.btn-purple { background: #a855f7; color: #fff; box-shadow: 0 0 15px rgba(168,85,247,0.4); width: 100%; }
+.btn-purple:hover { transform: translateY(-2px); box-shadow: 0 0 25px #a855f7; }
+.btn-outline { border: 1px solid #3b82f6; color: #fff; background: transparent; margin: 10px; }
