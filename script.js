@@ -1,4 +1,4 @@
-// --- 1. CONFIGURATION & INITIALIZATION ---
+// --- 1. FIREBASE CONFIG ---
 const firebaseConfig = {
     apiKey: "AIzaSyDLX4gTNGw_IQSdhXtSBl3utqCKFiwR2Hk",
     authDomain: "lpzone.firebaseapp.com",
@@ -8,51 +8,76 @@ const firebaseConfig = {
     appId: "1:709883143619:web:eab5fde631abdf7b548976"
 };
 
-// Inisialisasi Firebase
-firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
 const auth = firebase.auth();
 const db = firebase.firestore();
-
-// LINK BACKEND RAILWAY LU (Dah Active on Port 8080)
 const BACKEND_URL = "https://beck-production-6c7d.up.railway.app"; 
 
-// --- 2. AUTH & LOGIN LOGS ---
+// --- 2. LOGIC NAVIGASI (SATPAM MENU) ---
 auth.onAuthStateChanged(async (user) => {
     const nav = document.getElementById('dynamic-nav');
-    if (user && nav) {
-        // Ambil Data User & Role
-        const userDoc = await db.collection("users").doc(user.uid).get();
-        const role = userDoc.data()?.role || "MEMBER";
+    if (!nav) return; // Biar gak error kalau element nav gak ada
 
-        // Kirim Log Login ke Backend (Discord Webhook)
-        await fetch(`${BACKEND_URL}/api/log-login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name: user.displayName, email: user.email })
-        });
+    if (user) {
+        try {
+            // Ambil Role dengan Timeout biar gak nunggu kelamaan
+            const userDoc = await db.collection("users").doc(user.uid).get();
+            const role = userDoc.data()?.role || "MEMBER";
 
-        // Navigasi Dinamis Berdasarkan Role
-        let menu = `<a href="/">HOME</a><a href="/media">MEDIA</a>`;
-        if (role === "FOUNDER") menu += `<a href="/vault/a7b2x" style="color:#ff0000">OWNER AREA</a>`;
-        if (["MARGA", "ADMIN", "FOUNDER"].includes(role)) menu += `<a href="/sector/n1o4c" style="color:#a855f7">MARGA SECTOR</a>`;
-        menu += `<a href="#" onclick="auth.signOut()">OUT</a>`;
-        nav.innerHTML = menu;
-    } else if (nav) {
+            let menu = `
+                <a href="/">HOME</a>
+                <a href="/media">MEDIA</a>
+                <a href="/announcement">NEWS</a>
+            `;
+
+            if (role === "FOUNDER") {
+                menu += `<a href="/vault/a7b2x" style="color:#ff4747; font-weight:bold;">OWNER</a>`;
+            }
+            if (["MARGA", "ADMIN", "FOUNDER"].includes(role)) {
+                menu += `<a href="/sector/n1o4c" style="color:#a855f7;">MARGA</a>`;
+            }
+
+            menu += `<a href="#" onclick="logout()">OUT</a>`;
+            nav.innerHTML = menu;
+
+            // Kirim Log Login ke Railway (Silent)
+            fetch(`${BACKEND_URL}/api/log-login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: user.displayName, email: user.email })
+            }).catch(e => console.log("Backend offline, log skipped."));
+
+        } catch (err) {
+            // Jika Firestore error, tampilin menu basic aja biar gak kosong
+            nav.innerHTML = `<a href="/">HOME</a><a href="/media">MEDIA</a><a href="#" onclick="logout()">OUT (Error Load Role)</a>`;
+        }
+    } else {
         nav.innerHTML = `<a href="/">HOME</a><a href="/auth/portal">LOGIN</a>`;
     }
 });
 
-// --- 3. PUBLISH PROJECT (FOUNDER PANEL) ---
-// Fungsi ini dipanggil dari form upload di Owner Area
+// --- 3. FUNGSI LOGOUT ---
+function logout() {
+    auth.signOut().then(() => {
+        window.location.href = "/";
+    });
+}
+
+// --- 4. LOGIC UPLOAD (FOUNDER PANEL) ---
 async function postProject() {
-    const judul = document.getElementById('inp-judul').value;
-    const desc = document.getElementById('inp-desc').value;
+    const judul = document.getElementById('inp-judul')?.value;
+    const desc = document.getElementById('inp-desc')?.value;
     const fileInput = document.getElementById('inp-file-project');
     const btn = document.getElementById('btn-publish');
 
-    if (!judul || !desc || !fileInput.files[0]) return alert("Lengkapi data project!");
+    if (!judul || !desc || !fileInput.files[0]) {
+        return alert("Lengkapi data project (Judul, Deskripsi, & Foto)!");
+    }
 
-    btn.innerText = "Processing...";
+    btn.innerText = "UPLOADING...";
     btn.disabled = true;
 
     const formData = new FormData();
@@ -62,59 +87,30 @@ async function postProject() {
     formData.append('author', auth.currentUser.displayName || "Founder");
 
     try {
-        // Menembak ke Endpoint Railway (Firestore + Drive + Discord)
         const response = await fetch(`${BACKEND_URL}/api/publish-project`, {
             method: "POST",
             body: formData
         });
-
         const result = await response.json();
 
         if (result.status === "success") {
-            alert("🔥 Project Berhasil Ditayangkan!");
-            window.location.href = "/announcement";
+            alert("🔥 BERHASIL! Project mendarat di Drive & Firestore.");
+            location.reload();
         } else {
-            alert("Gagal: " + result.msg);
+            alert("Error: " + result.msg);
         }
     } catch (err) {
-        console.error("Error upload:", err);
-        alert("Server Railway lu lagi sibuk atau down!");
+        alert("Gagal konek ke Railway. Cek apakah server Railway lu Active?");
     } finally {
-        btn.innerText = "Publish Project";
+        btn.innerText = "PUBLISH PROJECT";
         btn.disabled = false;
     }
 }
 
-// --- 4. MARGA SECTOR GATEKEEPER ---
-const btnMarga = document.getElementById('btn-marga');
-if (btnMarga) {
-    btnMarga.onclick = async () => {
-        const user = auth.currentUser;
-        if (!user) {
-            alert("Login dulu Wak!");
-            window.location.href = "/auth/portal";
-            return;
-        }
-
-        const snap = await db.collection("users").doc(user.uid).get();
-        const role = snap.data()?.role || "MEMBER";
-
-        if (["MARGA", "ADMIN", "FOUNDER"].includes(role)) {
-            // Berhasil: Masuk ke Sector (Dihandle oleh vercel.json rewrites)
-            window.location.href = "/sector/n1o4c";
-        } else {
-            alert("⛔ AKSES DITOLAK: Lu bukan bagian dari Marga Noctyra!");
-        }
-    };
-}
-
-// --- 5. CYBER SECURITY (ANTI-INSPECT & F12) ---
+// --- 5. KEAMANAN (ANTI-INSPECT) ---
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.onkeydown = (e) => {
-    // Blokir F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
-    if (e.keyCode == 123 || 
-        (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode)) || 
-        (e.ctrlKey && e.keyCode == 85)) {
+    if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode)) || (e.ctrlKey && e.keyCode == 85)) {
         return false;
     }
 };
