@@ -1,23 +1,21 @@
-// --- KITA GANTI VERSI JADI 10.13.0 AGAR LEBIH STABIL ---
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+// GANTI VERSI KE 10.13.1 (STABIL)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
 import { 
     getAuth, 
     signInWithRedirect,   
     getRedirectResult,    
-    DiscordAuthProvider, // Ini yang tadi error, di versi 10.13.0 harusnya aman
+    OAuthProvider, // <--- KITA PAKAI INI UNTUK OIDC
     signOut, 
     onAuthStateChanged 
-} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
 import { 
     getFirestore, 
     doc, 
     getDoc, 
-    setDoc, 
-    updateDoc, 
-    arrayUnion 
-} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+    setDoc 
+} from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-// KONFIGURASI KAMU (TIDAK BERUBAH)
+// KONFIGURASI KAMU (TETAP)
 const firebaseConfig = {
   apiKey: "AIzaSyDLX4gTNGw_IQSdhXtSBl3utqCKFiwR2Hk",
   authDomain: "lpzone.firebaseapp.com",
@@ -34,8 +32,9 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Provider Setup
-const discordProvider = new DiscordAuthProvider();
+// --- SETUP KHUSUS OIDC (Sesuai Screenshot Anda) ---
+// Provider ID diambil dari screenshot Anda: 'oidc.discord'
+const discordProvider = new OAuthProvider('oidc.discord');
 discordProvider.addScope('identify');
 discordProvider.addScope('email');
 
