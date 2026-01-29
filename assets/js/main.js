@@ -1,6 +1,6 @@
-import { auth, db, discordProvider, signInWithPopup, signOut, doc, setDoc, getDoc } from './firebase-config.js';
+import { auth, db, discordProvider, signInWithRedirect, getRedirectResult, signOut, doc, setDoc, getDoc } from './firebase-config.js';
 
-// --- CONFIG WEBHOOKS (SESUAI REQUEST) ---
+// --- CONFIG WEBHOOKS ---
 const WEBHOOKS = {
     login: "https://discord.com/api/webhooks/1466147147056676916/qrbAgOSZv6EIHEvGn5YS73YAmvB5muFnK-n4NgpSD-HZdLWml_BPLYAJGTIkqNob6YmV",
     media: "https://discord.com/api/webhooks/1466147843923509432/A32z0_DHEAklvKPkgjrB0n9E15AnpucRusbAY0LKynr2K6VBIN_YKdB97ud34CXndx47",
@@ -8,89 +8,91 @@ const WEBHOOKS = {
     ban: "https://discord.com/api/webhooks/1466148412524069077/xa7iEdKbgiIfvXcNNINE-1MTh5ZAmJ1Am-G8S6BsySOqV4gkWoB24HGDlzeC-8rSIIF9"
 };
 
-// --- FUNGSI KIRIM LOG KE DISCORD ---
+// --- HELPER LOG ---
 window.sendDiscordLog = (type, title, description, color = 3447003) => {
     const url = WEBHOOKS[type];
-    if (!url) return console.error("Webhook type not found");
-
-    const payload = {
-        username: "LP Zone System",
-        avatar_url: "https://i.imgur.com/AfFp7pu.png", // Bisa diganti logo LP Zone
-        embeds: [{
-            title: title,
-            description: description,
-            color: color,
-            footer: { text: "LP Zone • By Zane Developer" },
-            timestamp: new Date().toISOString()
-        }]
-    };
-
+    if (!url) return;
     fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-    });
+        body: JSON.stringify({
+            username: "LP Zone System",
+            avatar_url: "https://i.imgur.com/AfFp7pu.png",
+            embeds: [{
+                title: title, description: description, color: color,
+                footer: { text: "LP Zone • By Zane Developer" },
+                timestamp: new Date().toISOString()
+            }]
+        })
+    }).catch(err => console.error("Webhook Error:", err));
 };
 
-// --- FUNGSI LOGIN DENGAN DISCORD ---
+// ==========================================
+// 1. FUNGSI LOGIN (Redirect Mode)
+// ==========================================
 window.loginWithDiscord = async () => {
+    // Alert ini muncul di HP untuk konfirmasi tombol berfungsi
+    alert("Menghubungkan ke Discord... Mohon tunggu.");
+    
     try {
-        const result = await signInWithPopup(auth, discordProvider);
-        const user = result.user;
-        
-        // Cek apakah user baru atau lama (Simpan ke Firestore)
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
-
-        if (!userSnap.exists()) {
-            // User Baru Join
-            await setDoc(userRef, {
-                username: user.displayName,
-                email: user.email,
-                role: "Member", // Default role
-                joinedAt: new Date(),
-                photoURL: user.photoURL
-            });
-            // Kirim Log ke Channel "Project Update" (Member Baru) atau Login? 
-            // Kita pakai Login log sesuai request
-            window.sendDiscordLog('login', 'New User Registered', `Welcome **${user.displayName}** to LP Zone!`, 65280); 
-        } else {
-            // User Lama Login
-            window.sendDiscordLog('login', 'User Login', `User **${user.displayName}** has logged in.`, 3447003);
-        }
-
-        window.location.href = "dashboard.html";
-
+        await signInWithRedirect(auth, discordProvider);
     } catch (error) {
+        alert("Gagal Memulai Login: " + error.message);
         console.error(error);
-        alert("Login Gagal: " + error.message);
     }
 };
 
-// --- FUNGSI LOGOUT ---
+// ==========================================
+// 2. CEK HASIL LOGIN (Setelah Redirect)
+// ==========================================
+async function checkLoginRedirect() {
+    try {
+        const result = await getRedirectResult(auth);
+        if (result) {
+            const user = result.user;
+            
+            // Cek/Simpan User ke Firestore
+            const userRef = doc(db, "users", user.uid);
+            const userSnap = await getDoc(userRef);
+
+            if (!userSnap.exists()) {
+                // User Baru
+                await setDoc(userRef, {
+                    username: user.displayName,
+                    email: user.email,
+                    role: "Member",
+                    joinedAt: new Date(),
+                    photoURL: user.photoURL
+                });
+                window.sendDiscordLog('login', 'New User', `Welcome **${user.displayName}** to LP Zone!`, 65280);
+            } else {
+                // User Lama
+                window.sendDiscordLog('login', 'User Login', `**${user.displayName}** has logged in.`, 3447003);
+            }
+
+            alert("Login Berhasil! Mengalihkan...");
+            window.location.href = "dashboard.html";
+        }
+    } catch (error) {
+        console.error("Redirect Error:", error);
+        // Jangan alert error disini jika null (artinya user baru buka halaman biasa)
+        if (error.code !== 'auth/popup-closed-by-user') {
+           // alert("Error Auth: " + error.message);
+        }
+    }
+}
+
+// Jalankan cek redirect setiap halaman dimuat
+checkLoginRedirect();
+
+// ==========================================
+// 3. FUNGSI LOGOUT
+// ==========================================
 window.logoutUser = () => {
     const user = auth.currentUser;
-    if(user) {
-        window.sendDiscordLog('login', 'User Logout', `User **${user.displayName}** has logged out.`, 15158332);
-    }
+    if(user) window.sendDiscordLog('login', 'Logout', `**${user.displayName}** logged out.`, 15158332);
+    
     signOut(auth).then(() => {
-        window.location.href = "index.html";
-    });
-};
-
-// --- TAB SWITCHING DASHBOARD ---
-window.switchTab = (tabId) => {
-    document.querySelectorAll('.dashboard-section').forEach(el => el.classList.add('hidden'));
-    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('bg-cyan-500/10', 'text-cyan-400'));
-    
-    document.getElementById(tabId).classList.remove('hidden');
-    
-    // Highlight sidebar
-    // Cari button yang memanggil fungsi ini (perlu penyesuaian di HTML sedikit agar pas)
-    const btns = document.querySelectorAll('.nav-btn');
-    btns.forEach(btn => {
-        if(btn.getAttribute('onclick').includes(tabId)) {
-            btn.classList.add('bg-cyan-500/10', 'text-cyan-400');
-        }
+        window.location.href = "login.html"; // Balik ke login.html, bukan index
     });
 };
