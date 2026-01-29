@@ -1,13 +1,13 @@
-// Import Firebase SDK via CDN
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+// --- KITA GANTI VERSI JADI 10.13.0 AGAR LEBIH STABIL ---
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import { 
     getAuth, 
-    signInWithRedirect,   // <--- PENTING BUAT HP
-    getRedirectResult,    // <--- PENTING BUAT NANGKAP HASIL LOGIN
-    DiscordAuthProvider, 
+    signInWithRedirect,   
+    getRedirectResult,    
+    DiscordAuthProvider, // Ini yang tadi error, di versi 10.13.0 harusnya aman
     signOut, 
     onAuthStateChanged 
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import { 
     getFirestore, 
     doc, 
@@ -15,9 +15,9 @@ import {
     setDoc, 
     updateDoc, 
     arrayUnion 
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
-// KONFIGURASI KAMU
+// KONFIGURASI KAMU (TIDAK BERUBAH)
 const firebaseConfig = {
   apiKey: "AIzaSyDLX4gTNGw_IQSdhXtSBl3utqCKFiwR2Hk",
   authDomain: "lpzone.firebaseapp.com",
@@ -33,13 +33,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const discordProvider = new DiscordAuthProvider();
 
-// Tambahkan Scopes (Opsional, biar data lengkap)
+// Provider Setup
+const discordProvider = new DiscordAuthProvider();
 discordProvider.addScope('identify');
 discordProvider.addScope('email');
 
-// Export semua yang dibutuhkan
+// Export
 export { 
     auth, 
     db, 
