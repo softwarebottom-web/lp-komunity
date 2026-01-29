@@ -1,12 +1,39 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8"><title>LP ZONE | COMMUNITY</title>
+    <meta charset="UTF-8">
+    <title>ZANE DEVELOPER</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .hero { text-align: center; padding: 50px 20px; }
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; }
+        .menu-card { padding: 30px; text-align: center; border: 1px solid #333; transition: 0.3s; cursor: pointer; text-decoration: none; color: white; display: block; }
+        .menu-card:hover { border-color: var(--primary); background: rgba(168,85,247,0.1); }
+    </style>
 </head>
 <body>
     <nav id="dynamic-nav"></nav>
-    <div class="container"><h1 class="glitch">LP ZONE</h1><p style="text-align:center">Innovation & Coding Insight</p></div>
+    <div class="container">
+        <div class="hero">
+            <h1 class="glitch" style="font-size: 3em;">ZANE DEVELOPER</h1>
+            <p style="color: #888;">Community & Development Portal</p>
+        </div>
+
+        <div class="menu-grid">
+            <a href="lab.html" class="menu-card glass-card">
+                <h2 style="color: #3b82f6;">🧪 LAB</h2>
+                <p>Experimental Projects & Scripts</p>
+            </a>
+            <a href="store.html" class="menu-card glass-card">
+                <h2 style="color: #a855f7;">🛒 STORE</h2>
+                <p>Official Assets & Services</p>
+            </a>
+        </div>
+        
+        <div style="margin-top: 20px; text-align: center;">
+            <a href="media.html" class="btn-purple" style="display:inline-block; width:auto; padding: 10px 40px; text-decoration:none;">EXPLORE MEDIA</a>
+        </div>
+    </div>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
