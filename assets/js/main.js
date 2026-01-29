@@ -3,7 +3,7 @@ import {
     db, 
     discordProvider, 
     signInWithRedirect, 
-    getRedirectResult, 
+    onAuthStateChanged, // <--- KITA PAKAI INI SEKARANG
     signOut, 
     doc, 
     setDoc, 
@@ -18,7 +18,7 @@ const WEBHOOKS = {
     ban: "https://discord.com/api/webhooks/1466148412524069077/xa7iEdKbgiIfvXcNNINE-1MTh5ZAmJ1Am-G8S6BsySOqV4gkWoB24HGDlzeC-8rSIIF9"
 };
 
-// --- HELPER LOG KE DISCORD ---
+// --- HELPER LOG ---
 window.sendDiscordLog = (type, title, description, color = 3447003) => {
     const url = WEBHOOKS[type];
     if (!url) return;
@@ -41,99 +41,101 @@ window.sendDiscordLog = (type, title, description, color = 3447003) => {
 };
 
 // ==========================================
-// 1. FUNGSI LOGIN (Redirect Mode)
+// 1. FUNGSI LOGIN (TOMBOL DIKLIK)
 // ==========================================
 window.loginWithDiscord = async () => {
-    // Alert untuk konfirmasi di HP bahwa tombol ditekan
-    alert("Menghubungkan ke Discord... Mohon tunggu.");
-    
+    // Alert biar user tau proses jalan
+    alert("Membuka Discord...");
     try {
-        // Menggunakan OIDC Provider yang sudah diset di config
         await signInWithRedirect(auth, discordProvider);
     } catch (error) {
-        alert("Gagal Memulai Login: " + error.message);
-        console.error("Login Error:", error);
+        alert("Gagal Login: " + error.message);
     }
 };
 
 // ==========================================
-// 2. CEK HASIL LOGIN (Otomatis jalan setelah Redirect)
+// 2. PEMANTAU STATUS (INI KUNCINYA)
 // ==========================================
-async function checkLoginRedirect() {
-    try {
-        // Cek apakah user baru saja kembali dari halaman Discord
-        const result = await getRedirectResult(auth);
+// Fungsi ini jalan OTOMATIS setiap kali web dibuka/refresh
+// Jika user sudah login (balik dari discord), dia langsung kerja
+onAuthStateChanged(auth, async (user) => {
+    
+    // Cek apakah kita ada di halaman login.html
+    if (window.location.pathname.includes("login.html") || window.location.pathname === "/") {
         
-        if (result) {
-            const user = result.user;
-            
-            // Cek data user di Firestore
-            const userRef = doc(db, "users", user.uid);
-            const userSnap = await getDoc(userRef);
+        if (user) {
+            console.log("User terdeteksi login:", user.displayName);
+            // alert("Login Terdeteksi! Memproses data..."); // Debugging (boleh dihapus nanti)
 
-            if (!userSnap.exists()) {
-                // --- USER BARU ---
-                await setDoc(userRef, {
-                    username: user.displayName || "User",
-                    email: user.email,
-                    role: "Member", // Default Role
-                    joinedAt: new Date(),
-                    photoURL: user.photoURL
-                });
-                // Log ke Discord (Warna Hijau)
-                window.sendDiscordLog('login', 'New User Joined', `Welcome **${user.displayName}** to LP Zone!`, 65280);
-            } else {
-                // --- USER LAMA ---
-                // Log ke Discord (Warna Biru)
-                window.sendDiscordLog('login', 'User Login', `**${user.displayName}** has logged in.`, 3447003);
+            try {
+                // Cek Database
+                const userRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userRef);
+
+                if (!userSnap.exists()) {
+                    // --- USER BARU (Save & Webhook) ---
+                    await setDoc(userRef, {
+                        username: user.displayName || "User",
+                        email: user.email,
+                        role: "Member",
+                        joinedAt: new Date(),
+                        photoURL: user.photoURL
+                    });
+                    
+                    // Webhook User Baru
+                    window.sendDiscordLog('login', 'New User Joined', `Welcome **${user.displayName}** to LP Zone!`, 65280);
+                    
+                } else {
+                    // --- USER LAMA ---
+                    // Opsional: Update 'lastLogin'
+                     await setDoc(userRef, { lastLogin: new Date() }, { merge: true });
+                }
+
+                // Redirect ke Dashboard
+                console.log("Redirecting to dashboard...");
+                window.location.href = "dashboard.html";
+
+            } catch (error) {
+                console.error("Database Error:", error);
+                alert("Gagal simpan database: " + error.message + "\nCek Rules Firestore!");
             }
-
-            // Redirect ke Dashboard
-            window.location.href = "dashboard.html";
         }
-    } catch (error) {
-        console.error("Redirect Check Error:", error);
-        // Abaikan error 'popup-closed' atau null result (artinya user buka web biasa)
-        if (error.code && error.code !== 'auth/popup-closed-by-user') {
-           // alert("Debug Auth: " + error.message);
+    } 
+    
+    // Logic untuk halaman Dashboard (Proteksi)
+    else if (window.location.pathname.includes("dashboard.html")) {
+        if (!user) {
+            // Kalau gak ada user tapi nekat masuk dashboard, tendang keluar
+            window.location.href = "login.html";
         }
     }
-}
+});
 
-// Jalankan fungsi pengecekan setiap halaman dimuat
-checkLoginRedirect();
 
 // ==========================================
 // 3. FUNGSI LOGOUT
 // ==========================================
 window.logoutUser = () => {
     const user = auth.currentUser;
-    if(user) {
-        window.sendDiscordLog('login', 'Logout', `**${user.displayName}** logged out.`, 15158332);
-    }
+    if(user) window.sendDiscordLog('login', 'Logout', `**${user.displayName}** logged out.`, 15158332);
     
     signOut(auth).then(() => {
         window.location.href = "login.html";
-    }).catch((error) => {
-        console.error("Logout Error:", error);
     });
 };
 
 // ==========================================
-// 4. TAB SWITCHING (Untuk Dashboard)
+// 4. TAB SWITCHING
 // ==========================================
 window.switchTab = (tabId) => {
-    // Sembunyikan semua section
     document.querySelectorAll('.dashboard-section').forEach(el => el.classList.add('hidden'));
     document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('bg-cyan-500/10', 'text-cyan-400'));
     
-    // Tampilkan yang dipilih
     const target = document.getElementById(tabId);
     if (target) {
         target.classList.remove('hidden');
-        
-        // Highlight tombol sidebar (Cari tombol yang punya onclick ke tabId ini)
         const activeBtns = document.querySelectorAll(`button[onclick="switchTab('${tabId}')"]`);
         activeBtns.forEach(btn => btn.classList.add('bg-cyan-500/10', 'text-cyan-400'));
     }
 };
+                            
