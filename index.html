@@ -2,43 +2,29 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>L.P ZONE - HOME</title>
-    <link rel="stylesheet" href="/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L.P ZONE | NOCTYRA SECTOR</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container animate">
-        <header style="text-align: center; margin: 40px 0;">
-            <h1 class="logo-text">L.P ZONE</h1>
-            <p style="color: #888; font-size: 12px; letter-spacing: 2px;">DEV & ROLEPLAY COMMUNITY</p>
-        </header>
+    <nav id="dynamic-nav">
+        </nav>
 
-        <div class="glass-card">
-            <h3>📍 ABOUT L.P ZONE</h3>
-            <p style="font-size: 13px; color: #cbd5e1; margin-top: 10px;">
-                Wadah buat lu yang mau belajar scripting (Pawn, JS, Web) sambil main roleplay. 
-                Gak ada suhu, gak ada newbie, kita semua sama-sama belajar di sini.
-            </p>
-        </div>
-
-        <div class="grid-2">
-            <div class="glass-card" style="text-align: center; cursor: pointer;" onclick="window.location.href='https://lpzone.web.id'">
-                <h4 style="color: var(--primary);">🧪 LAB PROJECT</h4>
-                <p style="font-size: 10px; color: #888;">Cek hasil riset script.</p>
-            </div>
-            <div class="glass-card" style="text-align: center; cursor: pointer;" onclick="window.location.href='https://digital-store-fikri.biz.id'">
-                <h4 style="color: var(--secondary);">🛒 LP STORE</h4>
-                <p style="font-size: 10px; color: #888;">Beli aset premium.</p>
+    <main class="hero">
+        <div class="container">
+            <h1>WELCOME TO THE ZONE</h1>
+            <p>Authorized personnel only. Noctyra Sector monitoring active.</p>
+            
+            <div class="action-buttons">
+                <a href="/media" class="btn-main">Media Area</a>
+                <button id="btn-marga" class="btn-purple">Access Marga Sector</button>
             </div>
         </div>
+    </main>
 
-        <div class="glass-card marga-card">
-            <h3 style="color: #a855f7;">⚡ NOCTYRA ELITE</h3>
-            <p style="font-size: 12px; margin-top: 5px;">Special Family of L.P Zone. Join the Underground.</p>
-            <button class="btn-primary" onclick="location.href='/margaarea.html'" style="background: #a855f7; color: white; margin-top: 10px;">ENTER HEADQUARTER</button>
-        </div>
-    </div>
-    <nav id="dynamic-nav"></nav>
-    <script src="/script.js" type="module"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
