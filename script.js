@@ -1,4 +1,4 @@
-// --- CONFIG ---
+// --- 1. CONFIGURATION ---
 const URL_LAB = "https://link-lab-lu.com"; 
 const URL_STORE = "https://link-store-lu.com";
 
@@ -14,20 +14,22 @@ const firebaseConfig = {
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
-const BACKEND_URL = "https://beck-production-6c7d.up.railway.app";
+const BACKEND_URL = "https://beck-production-6c7d.up.railway.app"; // URL Railway Lu
 
-// --- 1. BOTTOM NAVIGASI & AUTH CHECK ---
+// --- 2. NAVIGASI BAWAH & AUTH LOGIC ---
 auth.onAuthStateChanged(async (user) => {
     const nav = document.getElementById('dynamic-nav');
     const statusText = document.getElementById('user-status');
     if (!nav) return;
 
     let role = "GUEST";
+    
     if (user) {
-        // Log Login (Sekali per sesi)
+        // Log Login Otomatis ke Discord (Sekali per sesi)
         if (!sessionStorage.getItem('logged')) {
             fetch(`${BACKEND_URL}/api/log-login`, {
-                method: 'POST', headers: {'Content-Type':'application/json'},
+                method: 'POST', 
+                headers: {'Content-Type':'application/json'},
                 body: JSON.stringify({ name: user.displayName, email: user.email, uid: user.uid })
             });
             sessionStorage.setItem('logged', 'true');
@@ -35,8 +37,10 @@ auth.onAuthStateChanged(async (user) => {
 
         try {
             const snap = await db.collection("users").doc(user.uid).get();
-            role = snap.data()?.role || "MEMBER";
+            const userData = snap.data();
+            role = userData?.role || "MEMBER";
             
+            // Proteksi Banned
             if(role === "BANNED") {
                 alert("AKSES DITOLAK: Akun anda telah di-BANNED.");
                 auth.signOut();
@@ -44,13 +48,13 @@ auth.onAuthStateChanged(async (user) => {
                 return;
             }
             if(statusText) statusText.innerText = `Identity: ${user.displayName} [${role}]`;
-        } catch (e) { console.log("Role error"); }
+        } catch (e) { console.log("Fetch role error"); }
     } else {
         if(statusText) statusText.innerText = "Login to access secure channels.";
     }
 
-    // RENDER BOTTOM NAV BERJEJER (MOBILE STYLE)
-    let menu = `
+    // Render Menu Berjejer (Bottom Bar Style)
+    let menuHTML = `
         <a href="index.html"><span>🏠</span>HOME</a>
         <a href="media.html"><span>📸</span>MEDIA</a>
         <a href="announcement.html"><span>📢</span>NEWS</a>
@@ -58,17 +62,140 @@ auth.onAuthStateChanged(async (user) => {
     `;
 
     if (user) {
-        if (["MARGA", "FOUNDER"].includes(role)) menu += `<a href="margaarea.html"><span>🩸</span>HQ</a>`;
-        if (["FOUNDER"].includes(role)) menu += `<a href="ownerarea.html"><span>👑</span>OWNER</a>`;
-        menu += `<a href="#" onclick="logout()"><span>🚪</span>OUT</a>`;
+        if (["MARGA", "FOUNDER"].includes(role)) menuHTML += `<a href="margaarea.html"><span>🩸</span>HQ</a>`;
+        if (role === "FOUNDER") menuHTML += `<a href="ownerarea.html"><span>👑</span>OWNER</a>`;
+        menuHTML += `<a href="#" onclick="logout()"><span>🚪</span>OUT</a>`;
     } else {
-        menu += `<a href="portal.html"><span>🔑</span>LOGIN</a>`;
+        menuHTML += `<a href="portal.html"><span>🔑</span>LOGIN</a>`;
     }
-    nav.innerHTML = menu;
+    nav.innerHTML = menuHTML;
 });
 
-// --- 2. LOGIN DISCORD (FIX NAME) ---
+// --- 3. LOGIN DISCORD (FIX NAME NULL) ---
 window.loginDiscord = () => {
+    const provider = new firebase.auth.OAuthProvider('discord.com');
+    provider.addScope('identify'); 
+    
+    auth.signInWithPopup(provider).then((res) => {
+        const profile = res.additionalUserInfo.profile;
+        const discordName = profile.username || profile.global_name || res.user.displayName; 
+
+        db.collection("users").doc(res.user.uid).set({
+            name: discordName, 
+            email: res.user.email,
+            role: "MEMBER", 
+            margaRank: "HOMIES",
+            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true }).then(() => {
+            window.location.href = "index.html";
+        });
+    }).catch(err => alert("Error: " + err.message));
+};
+
+window.logout = () => auth.signOut().then(() => {
+    sessionStorage.clear();
+    window.location.href="index.html";
+});
+
+// --- 4. POST SYSTEM (SOSMED & PROJECT) ---
+window.postContent = async () => {
+    const title = document.getElementById('inp-title').value;
+    const url = document.getElementById('inp-url').value;
+    const platform = document.getElementById('inp-platform').value;
+    const type = document.getElementById('inp-type').value;
+    const desc = document.getElementById('inp-desc').value;
+
+    if (!title || !url) return alert("Isi Judul & Link!");
+    
+    const btn = event.target;
+    btn.innerText = "PUBLISHING...";
+    btn.disabled = true;
+
+    try {
+        await fetch(`${BACKEND_URL}/api/publish`, {
+            method: "POST", 
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                title, desc, url, platform, type, 
+                author: auth.currentUser.displayName 
+            })
+        });
+        alert("Published & Webhook Sent!"); 
+        location.reload();
+    } catch (e) { alert("Backend Error!"); }
+    finally { btn.innerText = "PUBLISH"; btn.disabled = false; }
+};
+
+// --- 5. MARGA & OWNER CONTROL (RANK & BAN) ---
+window.updateRank = async () => {
+    const uid = document.getElementById('target-uid').value;
+    const rankVal = document.getElementById('target-rank').value;
+    
+    let newRole = (rankVal === "BANNED") ? "BANNED" : (rankVal === "MEMBER" ? "MEMBER" : "MARGA");
+    let newRank = (newRole === "MARGA") ? rankVal : null;
+
+    try {
+        await fetch(`${BACKEND_URL}/api/update-user`, {
+            method: 'POST', 
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ 
+                targetUid: uid, newRole, newRank, 
+                adminName: auth.currentUser.displayName 
+            })
+        });
+        alert("Status Updated & Logged!");
+    } catch(e) { alert("Error updating user."); }
+};
+
+window.postArchive = async () => {
+    const title = document.getElementById('arc-title').value;
+    const url = document.getElementById('arc-url').value;
+    const desc = document.getElementById('arc-desc').value;
+    
+    await fetch(`${BACKEND_URL}/api/post-archive`, {
+        method: 'POST', 
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ title, url, desc, author: auth.currentUser.displayName })
+    });
+    alert("Archive Secured!"); 
+    location.reload();
+};
+
+// --- 6. AUTO LOAD CONTENT ---
+async function loadContent() {
+    const mediaGrid = document.getElementById('media-grid');
+    const newsFeed = document.getElementById('news-feed');
+
+    if (mediaGrid || newsFeed) {
+        const snap = await db.collection("posts").orderBy("timestamp", "desc").limit(20).get();
+        if(mediaGrid) mediaGrid.innerHTML = "";
+        if(newsFeed) newsFeed.innerHTML = "";
+
+        snap.forEach(doc => {
+            const d = doc.data();
+            if (mediaGrid && d.type === 'SOCIAL') {
+                let color = d.platform === "YOUTUBE" ? "#ff0000" : (d.platform === "TIKTOK" ? "#00f2ea" : "#E1306C");
+                mediaGrid.innerHTML += `
+                    <div class="glass-card">
+                        <span style="background:${color}; padding:2px 8px; font-size:10px; border-radius:4px;">${d.platform}</span>
+                        <h4 style="margin:10px 0">${d.title}</h4>
+                        <a href="${d.url}" target="_blank" style="color:cyan; font-size:12px;">🔗 VIEW POST</a>
+                        <p style="font-size:12px; color:#aaa; margin-top:5px;">${d.desc}</p>
+                    </div>`;
+            }
+            if (newsFeed && d.type === 'SYSTEM') {
+                newsFeed.innerHTML += `
+                    <div class="glass-card">
+                        <h3 style="color:#3b82f6;">${d.title}</h3>
+                        <p style="font-size:14px; margin:10px 0;">${d.desc}</p>
+                        <small style="color:#666;">By: ${d.author}</small>
+                    </div>`;
+            }
+        });
+    }
+}
+
+window.addEventListener('DOMContentLoaded', loadContent);
     const provider = new firebase.auth.OAuthProvider('discord.com');
     provider.addScope('identify'); 
     
