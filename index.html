@@ -2,90 +2,40 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZANE DEVELOPER | HOME</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ZANE NOCYTRA</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Rajdhani:wght@600&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <nav id="dynamic-nav"></nav>
-
-    <header class="hero-section">
-        <h1 class="glitch-text">ZANE NOCYTRA</h1>
-        <p class="subtitle">
-            Membangun Ekosistem Digital & Komunitas Roleplay Terbesar.
-            <br>Inovasi Tanpa Batas, Kualitas Tanpa Kompromi.
-        </p>
-        
-        <div style="margin-top: 30px;">
-            <a href="media.html" class="btn-login-nav" style="background:transparent; border:1px solid var(--primary); margin-right:10px;">EXPLORE MEDIA</a>
-            <a href="portal.html" class="btn-login-nav">JOIN COMMUNITY</a>
-        </div>
+    <header class="hero">
+        <h1>ZANE <span style="color:var(--primary)">NOCYTRA</span></h1>
+        <p>Founder & Roleplayer Community</p>
     </header>
 
-    <div class="stats-bar">
-        <div class="stat-item">
-            <h3>500+</h3>
-            <p>Community Members</p>
+    <div class="menu-container">
+        <div class="main-card" style="border-color: #333;">
+            <p id="user-status">Memuat status...</p>
         </div>
-        <div class="stat-item">
-            <h3>100%</h3>
-            <p>Uptime Server</p>
-        </div>
-        <div class="stat-item">
-            <h3>50+</h3>
-            <p>Project Archives</p>
-        </div>
-    </div>
 
-    <div class="main-grid">
-        <a href="https://link-lab-lu.com" target="_blank" class="feature-card">
-            <h2 style="color: #3b82f6;">🧪 LABORATORY</h2>
-            <p>Akses eksperimen skrip, beta testing, dan inovasi kode terbaru yang sedang dikembangkan.</p>
-            <div style="margin-top:20px; font-size:12px; color:#3b82f6;">KLIK UNTUK MEMBUKA &rarr;</div>
+        <a href="https://link-lab.com" class="main-card">
+            <h2 style="color: #00f2ea;">🧪 LAB</h2>
+            <p>Experimental Scripts & Projects</p>
         </a>
 
-        <a href="https://link-store-lu.com" target="_blank" class="feature-card">
-            <h2 style="color: #a855f7;">🛒 OFFICIAL STORE</h2>
-            <p>Dapatkan aset premium, gamemode eksklusif, dan layanan jasa development terpercaya.</p>
-            <div style="margin-top:20px; font-size:12px; color:#a855f7;">KLIK UNTUK MEMBUKA &rarr;</div>
+        <a href="https://link-store.com" class="main-card">
+            <h2 style="color: var(--primary);">🛒 STORE</h2>
+            <p>Premium Assets & Services</p>
         </a>
-    </div>
 
-    <footer>
-        <p>&copy; 2026 ZANE DEVELOPER. POWERED BY NOCYTRA FAMILY.</p>
-        <p style="color:#666; margin-top:5px;">System v2.0 • Secured by Firebase</p>
-    </footer>
-
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="script.js"></script>
-
-</body>
-</html>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="script.js"></script>
-</body>
-</html>
-            </a>
-            
-            <a href="https://link-website-store-lu.com" target="_blank" class="glass-card menu-card">
-                <h2 style="color: #a855f7;">🛒 STORE</h2>
-                <p>Official Assets & Services</p>
-            </a>
-        </div>
-
-        <div style="margin-top: 30px; display: grid; gap: 10px;">
-            <a href="media.html" class="btn-primary" style="text-align: center; text-decoration: none;">BROWSE MEDIA GALLERY</a>
-            <a href="announcement.html" class="glass-card" style="text-align: center; text-decoration: none; padding: 15px; color: #aaa;">
-                See Latest Updates & Changelogs
-            </a>
+        <div class="main-card" style="opacity: 0.5;">
+            <h3>🚀 Recent Project</h3>
+            <p>Lihat update terbaru dari founder di menu News.</p>
         </div>
     </div>
+
+    <nav id="dynamic-nav"></nav>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
