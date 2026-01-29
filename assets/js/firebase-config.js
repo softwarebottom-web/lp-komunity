@@ -1,9 +1,23 @@
-// Import Firebase SDK
+// Import Firebase SDK via CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInWithPopup, DiscordAuthProvider, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { 
+    getAuth, 
+    signInWithRedirect,   // <--- PENTING BUAT HP
+    getRedirectResult,    // <--- PENTING BUAT NANGKAP HASIL LOGIN
+    DiscordAuthProvider, 
+    signOut, 
+    onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { 
+    getFirestore, 
+    doc, 
+    getDoc, 
+    setDoc, 
+    updateDoc, 
+    arrayUnion 
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// KONFIGURASI ASLI DARI ZANE
+// KONFIGURASI KAMU
 const firebaseConfig = {
   apiKey: "AIzaSyDLX4gTNGw_IQSdhXtSBl3utqCKFiwR2Hk",
   authDomain: "lpzone.firebaseapp.com",
@@ -19,10 +33,22 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-
-// Provider Setup
 const discordProvider = new DiscordAuthProvider();
-const googleProvider = new GoogleAuthProvider();
 
-// Export agar bisa dipakai di main.js
-export { auth, db, discordProvider, googleProvider, signInWithPopup, signOut, onAuthStateChanged, doc, getDoc, setDoc };
+// Tambahkan Scopes (Opsional, biar data lengkap)
+discordProvider.addScope('identify');
+discordProvider.addScope('email');
+
+// Export semua yang dibutuhkan
+export { 
+    auth, 
+    db, 
+    discordProvider, 
+    signInWithRedirect, 
+    getRedirectResult, 
+    signOut, 
+    onAuthStateChanged, 
+    doc, 
+    getDoc, 
+    setDoc 
+};
