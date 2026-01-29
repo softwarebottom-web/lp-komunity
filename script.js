@@ -1,4 +1,3 @@
-// --- 1. FIREBASE CONFIG ---
 const firebaseConfig = {
     apiKey: "AIzaSyDLX4gTNGw_IQSdhXtSBl3utqCKFiwR2Hk",
     authDomain: "lpzone.firebaseapp.com",
@@ -14,103 +13,78 @@ if (!firebase.apps.length) {
 
 const auth = firebase.auth();
 const db = firebase.firestore();
-const BACKEND_URL = "https://beck-production-6c7d.up.railway.app"; 
+const BACKEND_URL = "https://beck-production-6c7d.up.railway.app";
 
-// --- 2. LOGIC NAVIGASI (SATPAM MENU) ---
+// --- RENDER NAVIGASI AMAN ---
 auth.onAuthStateChanged(async (user) => {
     const nav = document.getElementById('dynamic-nav');
-    if (!nav) return; // Biar gak error kalau element nav gak ada
+    if (!nav) return;
+
+    // 1. Munculin menu basic dulu biar gak kosong melompong
+    let menu = `<a href="/">HOME</a><a href="/media">MEDIA</a><a href="/announcement">NEWS</a>`;
 
     if (user) {
         try {
-            // Ambil Role dengan Timeout biar gak nunggu kelamaan
-            const userDoc = await db.collection("users").doc(user.uid).get();
-            const role = userDoc.data()?.role || "MEMBER";
-
-            let menu = `
-                <a href="/">HOME</a>
-                <a href="/media">MEDIA</a>
-                <a href="/announcement">NEWS</a>
-            `;
+            // 2. Ambil data role dengan aman
+            const snap = await db.collection("users").doc(user.uid).get();
+            const role = snap.exists ? snap.data().role : "MEMBER";
 
             if (role === "FOUNDER") {
-                menu += `<a href="/vault/a7b2x" style="color:#ff4747; font-weight:bold;">OWNER</a>`;
+                menu += `<a href="/vault/a7b2x" style="color:#ff4d4d; font-weight:bold;">OWNER</a>`;
             }
             if (["MARGA", "ADMIN", "FOUNDER"].includes(role)) {
                 menu += `<a href="/sector/n1o4c" style="color:#a855f7;">MARGA</a>`;
             }
+            menu += `<a href="#" onclick="handleLogout()">OUT</a>`;
 
-            menu += `<a href="#" onclick="logout()">OUT</a>`;
-            nav.innerHTML = menu;
-
-            // Kirim Log Login ke Railway (Silent)
+            // 3. Kirim Log Login (Silent, gak bakal ganggu UI)
             fetch(`${BACKEND_URL}/api/log-login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name: user.displayName, email: user.email })
-            }).catch(e => console.log("Backend offline, log skipped."));
+            }).catch(() => console.log("Backend Offline"));
 
-        } catch (err) {
-            // Jika Firestore error, tampilin menu basic aja biar gak kosong
-            nav.innerHTML = `<a href="/">HOME</a><a href="/media">MEDIA</a><a href="#" onclick="logout()">OUT (Error Load Role)</a>`;
+        } catch (e) {
+            console.error("Gagal load role:", e);
+            menu += `<a href="#" onclick="handleLogout()">OUT (Role Error)</a>`;
         }
     } else {
-        nav.innerHTML = `<a href="/">HOME</a><a href="/auth/portal">LOGIN</a>`;
+        menu += `<a href="/auth/portal">LOGIN</a>`;
     }
+    
+    // 4. Update tampilan navbar
+    nav.innerHTML = menu;
 });
 
-// --- 3. FUNGSI LOGOUT ---
-function logout() {
-    auth.signOut().then(() => {
-        window.location.href = "/";
-    });
-}
+// --- FUNGSI LOGOUT ---
+window.handleLogout = function() {
+    auth.signOut().then(() => { window.location.href = "/"; });
+};
 
-// --- 4. LOGIC UPLOAD (FOUNDER PANEL) ---
-async function postProject() {
-    const judul = document.getElementById('inp-judul')?.value;
-    const desc = document.getElementById('inp-desc')?.value;
-    const fileInput = document.getElementById('inp-file-project');
-    const btn = document.getElementById('btn-publish');
+// --- GATEKEEPER TOMBOL MARGA ---
+const btnMarga = document.getElementById('btn-marga');
+if (btnMarga) {
+    btnMarga.onclick = async () => {
+        const user = auth.currentUser;
+        if (!user) return alert("Login dulu Wak!");
 
-    if (!judul || !desc || !fileInput.files[0]) {
-        return alert("Lengkapi data project (Judul, Deskripsi, & Foto)!");
-    }
+        try {
+            const snap = await db.collection("users").doc(user.uid).get();
+            const role = snap.data()?.role || "MEMBER";
 
-    btn.innerText = "UPLOADING...";
-    btn.disabled = true;
-
-    const formData = new FormData();
-    formData.append('file', fileInput.files[0]);
-    formData.append('judul', judul);
-    formData.append('desc', desc);
-    formData.append('author', auth.currentUser.displayName || "Founder");
-
-    try {
-        const response = await fetch(`${BACKEND_URL}/api/publish-project`, {
-            method: "POST",
-            body: formData
-        });
-        const result = await response.json();
-
-        if (result.status === "success") {
-            alert("🔥 BERHASIL! Project mendarat di Drive & Firestore.");
-            location.reload();
-        } else {
-            alert("Error: " + result.msg);
+            if (["MARGA", "ADMIN", "FOUNDER"].includes(role)) {
+                window.location.href = "/sector/n1o4c";
+            } else {
+                alert("⛔ AKSES DITOLAK: Khusus Marga Noctyra!");
+            }
+        } catch (err) {
+            alert("Terjadi kesalahan sistem.");
         }
-    } catch (err) {
-        alert("Gagal konek ke Railway. Cek apakah server Railway lu Active?");
-    } finally {
-        btn.innerText = "PUBLISH PROJECT";
-        btn.disabled = false;
-    }
+    };
 }
 
-// --- 5. KEAMANAN (ANTI-INSPECT) ---
+// --- ANTI-INSPECT ---
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.onkeydown = (e) => {
-    if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode)) || (e.ctrlKey && e.keyCode == 85)) {
-        return false;
-    }
+    if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73, 74, 67].includes(e.keyCode))) return false;
 };
